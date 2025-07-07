@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "whiteman_tools:block/uv_lamp_block"
+  }
+}
