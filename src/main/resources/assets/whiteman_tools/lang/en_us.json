@@ -1,3 +1,5 @@
 {
-  "item.whiteman_tools.unknown_compound": "Unknown compound"
+  "item.whiteman_tools.unknown_compound": "Unknown compound",
+
+  "creativetab.whiteman_tools_tab": "WhiteMan's Tools"
 }
