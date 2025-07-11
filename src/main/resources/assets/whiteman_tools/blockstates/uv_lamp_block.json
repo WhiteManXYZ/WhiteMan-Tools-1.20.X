@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
+    "lit=false": {
       "model": "whiteman_tools:block/uv_lamp_block"
+    },
+    "lit=true": {
+      "model": "whiteman_tools:block/uv_lamp_block_lit"
     }
   }
 }

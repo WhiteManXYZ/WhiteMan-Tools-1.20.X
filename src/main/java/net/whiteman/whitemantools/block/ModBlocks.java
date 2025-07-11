@@ -10,6 +10,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.whiteman.whitemantools.WhiteManToolsMod;
+import net.whiteman.whitemantools.block.custom.RedstoneLampUVBlock;
 import net.whiteman.whitemantools.item.ModItems;
 
 import java.util.function.Supplier;
@@ -19,8 +20,9 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, WhiteManToolsMod.MOD_ID);
 
     public static final RegistryObject<Block> UV_LAMP_BLOCK = registerBlock("uv_lamp_block",
-            () -> new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)
-                    .destroyTime((float) 1.5)));
+            () -> new RedstoneLampUVBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP)
+                    .destroyTime((float) 1.5)
+                    ));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> supplier) {
         RegistryObject<T> toReturn = BLOCKS.register(name, supplier);
