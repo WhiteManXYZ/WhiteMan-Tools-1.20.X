@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " 1 ",
+    "1#1",
+    " 1 "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "1": {
+      "item": "whiteman_tools:unknown_compound"
+    }
+  },
+  "result": {
+    "item": "whiteman_tools:uv_lamp_block"
+  }
+}

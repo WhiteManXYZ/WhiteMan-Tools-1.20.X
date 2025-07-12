@@ -1,14 +1,18 @@
 package net.whiteman.whitemantools.goal;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.pathfinder.Path;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.EnumSet;
 import java.util.function.Predicate;
 
 public class AvoidBlockGoal extends Goal {
@@ -18,8 +22,8 @@ public class AvoidBlockGoal extends Goal {
     private final double avoidDistanceX;
     private final double avoidDistanceY;
     private final double nearSpeed;
-
     private Path path;
+    private BlockPos avoidBlockPos;
 
     public AvoidBlockGoal(Mob mob, Predicate<BlockState> avoidPredicate, double avoidDistanceX, double avoidDistanceY, double nearSpeed) {
         this.mob = mob;
@@ -28,17 +32,29 @@ public class AvoidBlockGoal extends Goal {
         this.avoidDistanceX = avoidDistanceX;
         this.avoidDistanceY = avoidDistanceY;
         this.nearSpeed = nearSpeed;
+
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override
     public boolean canUse() {
         BlockPos mobPos = mob.blockPosition();
-        BlockPos nearestBlock = findNearestBlock(mob.level(), mobPos);
+        avoidBlockPos = findNearestBlock(mob.level(), mobPos);
 
-        if (nearestBlock == null) return false;
+        if (avoidBlockPos == null) return false;
 
-        Vec3 avoidVec = Vec3.atCenterOf(nearestBlock);
-        Vec3 direction = mob.position().subtract(avoidVec).normalize().scale(avoidDistanceX);
+        Vec3 avoidVec = Vec3.atCenterOf(avoidBlockPos);
+        Vec3 direction = mob.position().subtract(avoidVec);
+
+        // If mob too close to block: choosing random vector to escape
+        // TODO: DONT WORKING!!! FIX!!!
+        if (direction.lengthSqr() < 0.01) {
+            direction = getRandomHorizontalDirection();
+            // System.out.println("Mob Near UV BLOCK!");
+            // testing stuff here
+        }
+
+        direction = direction.normalize().scale(avoidDistanceX);
         Vec3 targetVec = mob.position().add(direction);
 
         path = navigation.createPath(BlockPos.containing(targetVec), 1);
@@ -47,7 +63,9 @@ public class AvoidBlockGoal extends Goal {
 
     @Override
     public void start() {
-        navigation.moveTo(path, nearSpeed);
+        if (path != null) {
+            navigation.moveTo(path, nearSpeed);
+        }
     }
 
     @Override
@@ -55,27 +73,74 @@ public class AvoidBlockGoal extends Goal {
         return !navigation.isDone();
     }
 
+    @Override
+    public void tick() {
+        if (avoidBlockPos != null) {
+            Vec3 mobPos = mob.position();
+            Vec3 avoidVec = Vec3.atCenterOf(avoidBlockPos);
+
+            double distSqr = mobPos.distanceToSqr(avoidVec);
+            double fireRadius = avoidDistanceX * 0.6;
+            double soundRadius = avoidDistanceX * 1.2;
+
+            if (distSqr < fireRadius * fireRadius) {
+                RandomSource random = mob.getRandom();
+                if (random.nextDouble() < 0.2) {
+                    mob.setSecondsOnFire(1);
+                }
+
+            }
+
+            if (distSqr < soundRadius * soundRadius) {
+                RandomSource random = mob.getRandom();
+                if (random.nextDouble() < 0.05) {
+                    mob.playSound(SoundEvents.FIRE_EXTINGUISH, 0.5F, 2.0F);
+                    mob.setSecondsOnFire(3);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void stop() {
+        avoidBlockPos = null;
+    }
+
+    @Override
+    public @NotNull EnumSet<Flag> getFlags() {
+        return EnumSet.of(Flag.MOVE);
+    }
+
     private BlockPos findNearestBlock(Level level, BlockPos origin) {
         int radiusXZ = (int) Math.ceil(avoidDistanceX);
         int radiusY = (int) Math.ceil(avoidDistanceY);
 
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        double nearestDistSqr = Double.MAX_VALUE;
+        BlockPos nearest = null;
 
         for (int dx = -radiusXZ; dx <= radiusXZ; dx++) {
             for (int dy = -radiusY; dy <= radiusY; dy++) {
                 for (int dz = -radiusXZ; dz <= radiusXZ; dz++) {
                     mutable.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
-
                     BlockState state = level.getBlockState(mutable);
+
                     if (avoidPredicate.test(state)) {
                         double distSqr = mob.position().distanceToSqr(Vec3.atCenterOf(mutable));
-                        if (distSqr <= avoidDistanceX * avoidDistanceX) {
-                            return mutable.immutable();
+                        if (distSqr < nearestDistSqr) {
+                            nearestDistSqr = distSqr;
+                            nearest = mutable.immutable();
                         }
                     }
                 }
             }
         }
-        return null;
+        return nearest;
+    }
+
+    private Vec3 getRandomHorizontalDirection() {
+        RandomSource random = mob.getRandom();
+        double angle = random.nextDouble() * 2 * Math.PI;
+        return new Vec3(Math.cos(angle), 0, Math.sin(angle));
     }
 }

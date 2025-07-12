@@ -30,11 +30,11 @@ public class CommonEvents {
                             state.hasProperty(BlockStateProperties.LIT) &&
                             state.getValue(BlockStateProperties.LIT);
 
-            mob.goalSelector.addGoal(1, new AvoidBlockGoal(
+            mob.goalSelector.addGoal(0, new AvoidBlockGoal(
                     mob,
                     avoidPredicate,
-                    7.0,   // avoid radius X
-                    4.0,                // avoid radius Y
+                    6.0,   // avoid radius X
+                    6.0,                // avoid radius Y
                     1.2                 // speed to avoid
             ));
         }
