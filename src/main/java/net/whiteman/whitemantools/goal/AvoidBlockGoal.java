@@ -6,10 +6,10 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -40,23 +40,29 @@ public class AvoidBlockGoal extends Goal {
     public boolean canUse() {
         BlockPos mobPos = mob.blockPosition();
         avoidBlockPos = findNearestBlock(mob.level(), mobPos);
-
         if (avoidBlockPos == null) return false;
 
         Vec3 avoidVec = Vec3.atCenterOf(avoidBlockPos);
         Vec3 direction = mob.position().subtract(avoidVec);
 
-        // If mob too close to block: choosing random vector to escape
-        // TODO: DONT WORKING!!! FIX!!!
-        if (direction.lengthSqr() < 0.01) {
+        double dx = direction.x;
+        double dz = direction.z;
+        double horizontalDistSqr = dx * dx + dz * dz;
+
+        if (horizontalDistSqr < 0.5) {
             direction = getRandomHorizontalDirection();
-            // System.out.println("Mob Near UV BLOCK!");
-            // testing stuff here
+        } else {
+            direction = direction.normalize();
+
+            // add angular deviation
+            double angleOffset = mob.getRandom().nextDouble() * 60.0 - 30.0; // -30 to +30 degrees
+            direction = rotateVectorY(direction, angleOffset);
         }
 
-        direction = direction.normalize().scale(avoidDistanceX);
-        Vec3 targetVec = mob.position().add(direction);
+        double minDistance = 1.0;
+        direction = direction.scale(Math.max(avoidDistanceX, minDistance));
 
+        Vec3 targetVec = mob.position().add(direction);
         path = navigation.createPath(BlockPos.containing(targetVec), 1);
         return path != null;
     }
@@ -83,20 +89,15 @@ public class AvoidBlockGoal extends Goal {
             double fireRadius = avoidDistanceX * 0.6;
             double soundRadius = avoidDistanceX * 1.2;
 
-            if (distSqr < fireRadius * fireRadius) {
-                RandomSource random = mob.getRandom();
-                if (random.nextDouble() < 0.2) {
-                    mob.setSecondsOnFire(1);
-                }
+            RandomSource random = mob.getRandom();
 
+            if (distSqr < fireRadius * fireRadius && random.nextDouble() < 0.2) {
+                mob.setSecondsOnFire(1);
             }
 
-            if (distSqr < soundRadius * soundRadius) {
-                RandomSource random = mob.getRandom();
-                if (random.nextDouble() < 0.05) {
-                    mob.playSound(SoundEvents.FIRE_EXTINGUISH, 0.5F, 2.0F);
-                    mob.setSecondsOnFire(3);
-                }
+            if (distSqr < soundRadius * soundRadius && random.nextDouble() < 0.05) {
+                mob.playSound(SoundEvents.FIRE_EXTINGUISH, 0.5F, 2.0F);
+                mob.setSecondsOnFire(3);
             }
         }
     }
@@ -142,5 +143,14 @@ public class AvoidBlockGoal extends Goal {
         RandomSource random = mob.getRandom();
         double angle = random.nextDouble() * 2 * Math.PI;
         return new Vec3(Math.cos(angle), 0, Math.sin(angle));
+    }
+
+    private Vec3 rotateVectorY(Vec3 vec, double degrees) {
+        double radians = Math.toRadians(degrees);
+        double cos = Math.cos(radians);
+        double sin = Math.sin(radians);
+        double x = vec.x * cos - vec.z * sin;
+        double z = vec.x * sin + vec.z * cos;
+        return new Vec3(x, vec.y, z);
     }
 }
