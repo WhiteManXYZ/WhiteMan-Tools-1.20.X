@@ -1,9 +1,11 @@
 package net.whiteman.whitemantools.block;
 
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -19,10 +21,16 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, WhiteManToolsMod.MOD_ID);
 
+
     public static final RegistryObject<Block> UV_LAMP_BLOCK = registerBlock("uv_lamp_block",
             () -> new RedstoneLampUVBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP)
                     .destroyTime((float) 1.5)
                     ));
+
+    public static final RegistryObject<Block> NETHER_ALGANIT_ORE = registerBlock("nether_alganit_ore",
+            () -> new DropExperienceBlock(BlockBehaviour.Properties.copy(Blocks.BLACKSTONE)
+                    .strength(6f).requiresCorrectToolForDrops(), UniformInt.of(2, 5)));
+
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> supplier) {
         RegistryObject<T> toReturn = BLOCKS.register(name, supplier);

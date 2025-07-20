@@ -15,12 +15,13 @@ public class ModCreativeModTabs {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, WhiteManToolsMod.MOD_ID);
 
     public static final RegistryObject<CreativeModeTab> WHITEMAN_TOOLS_TAB = CREATIVE_MODE_TABS.register("whiteman_tools_tab",
-            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.UNKNOWN_COMPOUND.get()))
+            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.ALGANIT.get()))
                     .title(Component.translatable("creativetab.whiteman_tools_tab"))
                     .displayItems((pParameters, pOutput) -> {
-                        pOutput.accept(ModItems.UNKNOWN_COMPOUND.get());
+                        pOutput.accept(ModItems.ALGANIT.get());
 
                         pOutput.accept(ModBlocks.UV_LAMP_BLOCK.get());
+                        pOutput.accept(ModBlocks.NETHER_ALGANIT_ORE.get());
                     })
                     .build());
 

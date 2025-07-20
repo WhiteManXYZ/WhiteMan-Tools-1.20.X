@@ -1,0 +1,4 @@
+// 1.20.1	2025-07-20T21:51:33.3225737	Registries
+f5ffef3c5af131eb1c69f640a0caa7055d32318e data/whiteman_tools/forge/biome_modifier/add_nether_alganit_ore.json
+680c5047979fc1300570ddfc5b19a1a8848487a1 data/whiteman_tools/worldgen/configured_feature/nether_alganit_ore.json
+48ae37647563e86e1a8840d54d65f97305ab8b10 data/whiteman_tools/worldgen/placed_feature/nether_alganit_ore_placed.json

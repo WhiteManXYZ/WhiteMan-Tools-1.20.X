@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": "whiteman_tools:nether_alganit_ore_placed",
+  "step": "underground_ores"
+}

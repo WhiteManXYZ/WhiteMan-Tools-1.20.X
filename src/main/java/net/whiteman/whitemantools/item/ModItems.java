@@ -12,8 +12,8 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, WhiteManToolsMod.MOD_ID);
 
-    public static final RegistryObject<Item> UNKNOWN_COMPOUND = ITEMS.register("unknown_compound",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> ALGANIT = ITEMS.register("alganit",
+            () -> new Item(new Item.Properties().fireResistant()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
