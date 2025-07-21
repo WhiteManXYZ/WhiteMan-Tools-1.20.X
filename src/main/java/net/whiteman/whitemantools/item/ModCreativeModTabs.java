@@ -21,6 +21,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.ALGANIT.get());
 
                         pOutput.accept(ModBlocks.UV_LAMP_BLOCK.get());
+                        pOutput.accept(ModBlocks.NEOPLASM_BLOCK.get());
                         pOutput.accept(ModBlocks.NETHER_ALGANIT_ORE.get());
                     })
                     .build());
