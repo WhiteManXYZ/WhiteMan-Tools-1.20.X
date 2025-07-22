@@ -2,9 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    " 1 ",
+    "I1I",
     "1#1",
-    " 1 "
+    "I1I"
   ],
   "key": {
     "#": {
@@ -12,6 +12,9 @@
     },
     "1": {
       "item": "whiteman_tools:alganit"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
     }
   },
   "result": {

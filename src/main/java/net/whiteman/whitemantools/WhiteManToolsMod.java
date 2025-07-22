@@ -14,6 +14,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.whiteman.whitemantools.block.ModBlocks;
+import net.whiteman.whitemantools.block.entity.ModBlockEntities;
 import net.whiteman.whitemantools.item.ModCreativeModTabs;
 import net.whiteman.whitemantools.item.ModItems;
 import org.slf4j.Logger;
@@ -33,6 +34,8 @@ public class WhiteManToolsMod {
 
         ModItems.ITEMS.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
+
+        ModBlockEntities.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
