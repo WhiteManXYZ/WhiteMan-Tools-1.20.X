@@ -13,12 +13,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
-import net.whiteman.whitemantools.block.entity.CrystalizingStationBlockEntity;
+import net.whiteman.whitemantools.block.entity.PurificationChamberBlockEntity;
 import net.whiteman.whitemantools.block.entity.ModBlockEntities;
 import org.jetbrains.annotations.Nullable;
 
-public class CrystalizingStationBlock extends BaseEntityBlock {
-    public CrystalizingStationBlock(Properties pProperties) {
+public class PurificationChamberBlock extends BaseEntityBlock {
+    public PurificationChamberBlock(Properties pProperties) {
         super(pProperties);
     }
 
@@ -26,8 +26,8 @@ public class CrystalizingStationBlock extends BaseEntityBlock {
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof CrystalizingStationBlockEntity) {
-                ((CrystalizingStationBlockEntity) blockEntity).drops();
+            if (blockEntity instanceof PurificationChamberBlockEntity) {
+                ((PurificationChamberBlockEntity) blockEntity).drops();
             }
         }
 
@@ -38,8 +38,8 @@ public class CrystalizingStationBlock extends BaseEntityBlock {
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide()) {
             BlockEntity entity = pLevel.getBlockEntity(pPos);
-            if(entity instanceof CrystalizingStationBlockEntity) {
-                NetworkHooks.openScreen(((ServerPlayer)pPlayer), (CrystalizingStationBlockEntity)entity, pPos);
+            if(entity instanceof PurificationChamberBlockEntity) {
+                NetworkHooks.openScreen(((ServerPlayer)pPlayer), (PurificationChamberBlockEntity)entity, pPos);
             } else {
                 throw new IllegalStateException("Our Container provider is missing!");
             }
@@ -50,7 +50,7 @@ public class CrystalizingStationBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new CrystalizingStationBlockEntity(pPos, pState);
+        return new PurificationChamberBlockEntity(pPos, pState);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CrystalizingStationBlock extends BaseEntityBlock {
             return null;
         }
 
-        return createTickerHelper(pBlockEntityType, ModBlockEntities.CRYSTALIZING_STATION_BE.get(),
+        return createTickerHelper(pBlockEntityType, ModBlockEntities.PURIFICATION_CHAMBER_BLOCK_BE.get(),
                 (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1));
     }
 }

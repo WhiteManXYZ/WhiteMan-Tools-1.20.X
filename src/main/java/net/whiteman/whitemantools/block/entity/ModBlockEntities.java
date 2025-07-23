@@ -12,10 +12,10 @@ public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, WhiteManToolsMod.MOD_ID);
 
-    public static final RegistryObject<BlockEntityType<CrystalizingStationBlockEntity>> CRYSTALIZING_STATION_BE =
-            BLOCK_ENTITIES.register("crystalizing_station_be", () ->
-                    BlockEntityType.Builder.of(CrystalizingStationBlockEntity::new,
-                            ModBlocks.CRYSTALIZING_STATION.get()).build(null));
+    public static final RegistryObject<BlockEntityType<PurificationChamberBlockEntity>> PURIFICATION_CHAMBER_BLOCK_BE =
+            BLOCK_ENTITIES.register("purification_chamber_be", () ->
+                    BlockEntityType.Builder.of(PurificationChamberBlockEntity::new,
+                            ModBlocks.PURIFICATION_CHAMBER_BLOCK.get()).build(null));
 
 
     public static void register(IEventBus eventBus) {
