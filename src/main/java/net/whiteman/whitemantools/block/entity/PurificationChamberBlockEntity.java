@@ -23,6 +23,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.whiteman.whitemantools.item.ModItems;
+import net.whiteman.whitemantools.screen.PurificationChamberBlockMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,7 +102,7 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
-        return null;
+        return new PurificationChamberBlockMenu(pContainerId, pPlayerInventory, this, this.data);
     }
 
     @Override
@@ -137,7 +138,7 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
     }
 
     private void craftItem() {
-        ItemStack result = new ItemStack(Items.DIAMOND, 1);
+        ItemStack result = new ItemStack(ModItems.PURIFIED_ALGANIT.get(), 1);
         this.itemHandler.extractItem(INPUT_SLOT, 1, false);
 
         this.itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(result.getItem(),
@@ -154,7 +155,8 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
 
     private boolean hasRecipe() {
         boolean hasCraftingItem = this.itemHandler.getStackInSlot(INPUT_SLOT).getItem() == ModItems.ALGANIT.get();
-        ItemStack result = new ItemStack(Items.DIAMOND);
+        // TODO: extract into new static variable
+        ItemStack result = new ItemStack(ModItems.PURIFIED_ALGANIT.get());
 
         return hasCraftingItem && canInsertAmountIntoOutputSlot(result.getCount()) && canInsertItemIntoOutputSlot(result.getItem());
     }

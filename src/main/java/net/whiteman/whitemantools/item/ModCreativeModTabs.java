@@ -19,11 +19,12 @@ public class ModCreativeModTabs {
                     .title(Component.translatable("creativetab.whiteman_tools_tab"))
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModItems.ALGANIT.get());
+                        pOutput.accept(ModItems.PURIFIED_ALGANIT.get());
 
                         pOutput.accept(ModBlocks.UV_LAMP_BLOCK.get());
-                        pOutput.accept(ModBlocks.NEOPLASM_BLOCK.get());
                         pOutput.accept(ModBlocks.NETHER_ALGANIT_ORE.get());
                         pOutput.accept(ModBlocks.PURIFICATION_CHAMBER_BLOCK.get());
+                        pOutput.accept(ModBlocks.NEOPLASM_BLOCK.get());
                     })
                     .build());
 

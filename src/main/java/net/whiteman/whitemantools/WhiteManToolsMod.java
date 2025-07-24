@@ -2,6 +2,7 @@ package net.whiteman.whitemantools;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,6 +18,8 @@ import net.whiteman.whitemantools.block.ModBlocks;
 import net.whiteman.whitemantools.block.entity.ModBlockEntities;
 import net.whiteman.whitemantools.item.ModCreativeModTabs;
 import net.whiteman.whitemantools.item.ModItems;
+import net.whiteman.whitemantools.screen.ModMenuTypes;
+import net.whiteman.whitemantools.screen.PurificationChamberBlockScreen;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -36,6 +39,7 @@ public class WhiteManToolsMod {
         ModBlocks.BLOCKS.register(modEventBus);
 
         ModBlockEntities.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
@@ -66,9 +70,7 @@ public class WhiteManToolsMod {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            MenuScreens.register(ModMenuTypes.PURIFICATION_CHAMBER_BLOCK_MENU.get(), PurificationChamberBlockScreen::new);
         }
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -20,6 +21,11 @@ import org.jetbrains.annotations.Nullable;
 public class PurificationChamberBlock extends BaseEntityBlock {
     public PurificationChamberBlock(Properties pProperties) {
         super(pProperties);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState pState) {
+        return RenderShape.MODEL;
     }
 
     @Override

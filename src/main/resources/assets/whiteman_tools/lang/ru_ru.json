@@ -1,10 +1,11 @@
 {
   "item.whiteman_tools.alganit": "Альганит",
+  "item.whiteman_tools.purified_alganit": "Очищенный альганит",
 
   "block.whiteman_tools.uv_lamp_block": "Редстоуновый УФ-Фонарь",
   "block.whiteman_tools.nether_alganit_ore": "Альганитовая руда",
-  "block.whiteman_tools.neoplasm_block": "Новообразование",
   "block.whiteman_tools.purification_chamber_block": "Очистительная камера",
+  "block.whiteman_tools.neoplasm_block": "Новообразование",
 
   "creativetab.whiteman_tools_tab": "Инструменты WhiteMan-а"
 }
