@@ -1,6 +1,7 @@
 package net.whiteman.whitemantools.screen;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -33,7 +34,7 @@ public class PurificationChamberBlockMenu extends AbstractContainerMenu {
         addPlayerHotbar(inv);
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 80, 11));
+            this.addSlot(new SlotItemHandler(iItemHandler, 0, 80, 17));
             this.addSlot(new SlotItemHandler(iItemHandler, 1, 80, 59));
         });
 
@@ -47,8 +48,8 @@ public class PurificationChamberBlockMenu extends AbstractContainerMenu {
 
     public int getScaledProgress() {
         int progress = this.data.get(0);
-        int maxProgress = this.data.get(1);  // Max Progress
-        int progressArrowSize = 26; // This is the height in pixels of your arrow
+        int maxProgress = this.data.get(1);
+        int progressArrowSize = 26;
 
         return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }

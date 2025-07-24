@@ -20,8 +20,7 @@ public class PurificationChamberBlockScreen extends AbstractContainerScreen<Puri
     @Override
     protected void init() {
         super.init();
-        this.inventoryLabelY = 10_000;
-        this.titleLabelY = 10_000;
+        this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
     }
 
     @Override
@@ -39,7 +38,7 @@ public class PurificationChamberBlockScreen extends AbstractContainerScreen<Puri
 
     private void renderProgressArrow(GuiGraphics guiGraphics, int x, int y) {
         if(menu.isCrafting()) {
-            guiGraphics.blit(TEXTURE, x + 85, y + 30, 176, 0, 8, menu.getScaledProgress());
+            guiGraphics.blit(TEXTURE, x + 100, y + 33, 176, 0, 8, menu.getScaledProgress());
         }
     }
 
