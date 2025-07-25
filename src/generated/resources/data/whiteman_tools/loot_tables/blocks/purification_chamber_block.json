@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "whiteman_tools:alganit"
+          "name": "whiteman_tools:purification_chamber_block"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "whiteman_tools:blocks/nether_alganit_ore"
+  "random_sequence": "whiteman_tools:blocks/purification_chamber_block"
 }

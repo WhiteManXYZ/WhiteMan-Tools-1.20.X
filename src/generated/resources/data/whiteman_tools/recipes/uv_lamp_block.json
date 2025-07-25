@@ -1,23 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "pattern": [
-    "I1I",
-    "1#1",
-    "I1I"
-  ],
+  "category": "redstone",
   "key": {
     "#": {
       "item": "minecraft:redstone_lamp"
     },
-    "1": {
+    "A": {
       "item": "whiteman_tools:purified_alganit"
     },
     "I": {
       "item": "minecraft:iron_ingot"
     }
   },
+  "pattern": [
+    "IAI",
+    "A#A",
+    "IAI"
+  ],
   "result": {
     "item": "whiteman_tools:uv_lamp_block"
-  }
+  },
+  "show_notification": true
 }

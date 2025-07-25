@@ -24,20 +24,19 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, WhiteManToolsMod.MOD_ID);
 
 
-    public static final RegistryObject<Block> NEOPLASM_BLOCK = registerBlock("neoplasm_block",
-            () -> new NeoplasmCoreBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
-                    .destroyTime((float) 2.0)
-                    .randomTicks()
+    public static final RegistryObject<Block> UV_LAMP_BLOCK = registerBlock("uv_lamp_block",
+            () -> new RedstoneLampUVBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP)
+                    .destroyTime((float) 1.5)
             ));
 
     public static final RegistryObject<Block> PURIFICATION_CHAMBER_BLOCK = registerBlock("purification_chamber_block",
             () -> new PurificationChamberBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)
             ));
 
-    public static final RegistryObject<Block> UV_LAMP_BLOCK = registerBlock("uv_lamp_block",
-            () -> new RedstoneLampUVBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP)
-                    .destroyTime((float) 1.5)
-                    ));
+    public static final RegistryObject<Block> NEOPLASM_BLOCK = registerBlock("neoplasm_block",
+            () -> new NeoplasmCoreBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
+                    .destroyTime((float) 2.0)
+            ));
 
     public static final RegistryObject<Block> NETHER_ALGANIT_ORE = registerBlock("nether_alganit_ore",
             () -> new DropExperienceBlock(BlockBehaviour.Properties.copy(Blocks.BLACKSTONE)

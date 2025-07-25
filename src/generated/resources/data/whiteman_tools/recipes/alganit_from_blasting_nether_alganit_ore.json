@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.0,
+  "group": "alganit",
+  "ingredient": {
+    "item": "whiteman_tools:nether_alganit_ore"
+  },
+  "result": "whiteman_tools:alganit"
+}

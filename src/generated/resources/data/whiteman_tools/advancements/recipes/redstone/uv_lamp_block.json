@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_purified_alganit": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "whiteman_tools:purified_alganit"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "whiteman_tools:uv_lamp_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_purified_alganit",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "whiteman_tools:uv_lamp_block"
+    ]
+  },
+  "sends_telemetry_event": false
+}
