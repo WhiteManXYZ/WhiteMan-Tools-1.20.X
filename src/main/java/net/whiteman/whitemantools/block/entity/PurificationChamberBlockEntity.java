@@ -22,10 +22,14 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.whiteman.whitemantools.block.custom.PurificationChamberBlock;
 import net.whiteman.whitemantools.item.ModItems;
+import net.whiteman.whitemantools.recipe.PurifierChamberRecipe;
 import net.whiteman.whitemantools.screen.PurificationChamberBlockMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class PurificationChamberBlockEntity extends BlockEntity implements MenuProvider {
     private final ItemStackHandler itemHandler = new ItemStackHandler(2);
@@ -37,7 +41,7 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
 
     protected final ContainerData data;
     private int progress = 0;
-    private int maxProgress = 60;
+    private int maxProgress = 200;
 
     public PurificationChamberBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.PURIFICATION_CHAMBER_BLOCK_BE.get(), pPos, pBlockState);
@@ -138,7 +142,9 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
     }
 
     private void craftItem() {
-        ItemStack result = new ItemStack(ModItems.PURIFIED_ALGANIT.get(), 1);
+        Optional<PurifierChamberRecipe> recipe = getCurrentRecipe();
+        ItemStack result = recipe.get().getResultItem(null);
+
         this.itemHandler.extractItem(INPUT_SLOT, 1, false);
 
         this.itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(result.getItem(),
@@ -154,11 +160,23 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
     }
 
     private boolean hasRecipe() {
-        boolean hasCraftingItem = this.itemHandler.getStackInSlot(INPUT_SLOT).getItem() == ModItems.ALGANIT.get();
-        // TODO: extract into new static variable
-        ItemStack result = new ItemStack(ModItems.PURIFIED_ALGANIT.get());
+        Optional<PurifierChamberRecipe> recipe = getCurrentRecipe();
 
-        return hasCraftingItem && canInsertAmountIntoOutputSlot(result.getCount()) && canInsertItemIntoOutputSlot(result.getItem());
+        if (recipe.isEmpty()) {
+            return false;
+        }
+        ItemStack result = recipe.get().getResultItem(getLevel().registryAccess());
+
+        return canInsertAmountIntoOutputSlot(result.getCount()) && canInsertItemIntoOutputSlot(result.getItem());
+    }
+
+    private Optional<PurifierChamberRecipe> getCurrentRecipe() {
+        SimpleContainer inventory = new SimpleContainer(this.itemHandler.getSlots());
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            inventory.setItem(i, this.itemHandler.getStackInSlot(i));
+        }
+
+        return this.level.getRecipeManager().getRecipeFor(PurifierChamberRecipe.Type.INSTANCE, inventory, level);
     }
 
     private boolean canInsertItemIntoOutputSlot(Item item) {

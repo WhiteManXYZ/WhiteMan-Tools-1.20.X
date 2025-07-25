@@ -18,6 +18,7 @@ import net.whiteman.whitemantools.block.ModBlocks;
 import net.whiteman.whitemantools.block.entity.ModBlockEntities;
 import net.whiteman.whitemantools.item.ModCreativeModTabs;
 import net.whiteman.whitemantools.item.ModItems;
+import net.whiteman.whitemantools.recipe.ModRecipes;
 import net.whiteman.whitemantools.screen.ModMenuTypes;
 import net.whiteman.whitemantools.screen.PurificationChamberBlockScreen;
 import org.slf4j.Logger;
@@ -40,6 +41,8 @@ public class WhiteManToolsMod {
 
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
+
+        ModRecipes.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 

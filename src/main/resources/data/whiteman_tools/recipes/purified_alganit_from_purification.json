@@ -1,0 +1,12 @@
+{
+  "type": "whiteman_tools:purification",
+  "ingredients": [
+    {
+      "item": "whiteman_tools:alganit"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "item": "whiteman_tools:purified_alganit"
+  }
+}
