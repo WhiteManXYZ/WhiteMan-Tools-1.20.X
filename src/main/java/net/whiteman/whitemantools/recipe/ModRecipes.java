@@ -11,8 +11,8 @@ public class ModRecipes {
     public static final DeferredRegister<RecipeSerializer<?>> SERIALIZER =
             DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, WhiteManToolsMod.MOD_ID);
 
-    public static final RegistryObject<RecipeSerializer<PurifierChamberRecipe>> PURIFICATION_SERIALIZER =
-            SERIALIZER.register("purification", () -> PurifierChamberRecipe.Serializer.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<PurificationStationRecipe>> PURIFICATION_SERIALIZER =
+            SERIALIZER.register("purification", () -> PurificationStationRecipe.Serializer.INSTANCE);
 
     public static void register(IEventBus eventBus) {
         SERIALIZER.register(eventBus);

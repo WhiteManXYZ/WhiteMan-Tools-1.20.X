@@ -20,10 +20,10 @@ public class ModBlockTagProvider extends BlockTagsProvider {
     protected void addTags(HolderLookup.Provider pProvider) {
         this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(
                 ModBlocks.NETHER_ALGANIT_ORE.get(),
-                ModBlocks.PURIFICATION_CHAMBER_BLOCK.get());
+                ModBlocks.PURIFICATION_STATION_BLOCK.get());
 
         this.tag(BlockTags.NEEDS_IRON_TOOL).add(
                 ModBlocks.NETHER_ALGANIT_ORE.get(),
-                ModBlocks.PURIFICATION_CHAMBER_BLOCK.get());
+                ModBlocks.PURIFICATION_STATION_BLOCK.get());
     }
 }

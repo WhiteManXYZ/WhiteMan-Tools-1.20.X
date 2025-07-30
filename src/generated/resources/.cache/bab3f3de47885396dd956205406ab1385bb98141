@@ -1,10 +1,8 @@
-// 1.20.1	2025-07-25T17:21:39.4780836	Block States: whiteman_tools
+// 1.20.1	2025-07-30T23:06:00.8101827	Block States: whiteman_tools
 0a97dfe06d0402f0730d969d4e10a6f0d4724ee2 assets/whiteman_tools/blockstates/neoplasm_block.json
 45a0fa8e16cc4defdf8cad9f82627e70a2d9e401 assets/whiteman_tools/blockstates/nether_alganit_ore.json
-538c4d6e3bbc0892d6118ac97598a4804f9e74d2 assets/whiteman_tools/blockstates/purification_chamber_block.json
+6e387afa945c6f06d5c234b0a7c9c1dfd33e4245 assets/whiteman_tools/blockstates/purification_station_block.json
 640ccce9be92c992d74e83e71e6425ed697752d1 assets/whiteman_tools/models/block/neoplasm_block.json
 4ebdd43d9e4c1355d5a66b5929ca0f40d61d358c assets/whiteman_tools/models/block/nether_alganit_ore.json
-8d54a1bd1ce2e4b862c7503d16fa90a5fb43b99e assets/whiteman_tools/models/block/purification_chamber_block.json
 4159ac8b2d209b21a80a616ba188aad58b44c29e assets/whiteman_tools/models/item/neoplasm_block.json
 9d2482b26803158b2c4479562394f174d3919933 assets/whiteman_tools/models/item/nether_alganit_ore.json
-6554984f8578954a7e005526952adb0ca76f5eeb assets/whiteman_tools/models/item/purification_chamber_block.json

@@ -13,7 +13,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,16 +21,14 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import net.whiteman.whitemantools.block.custom.PurificationChamberBlock;
-import net.whiteman.whitemantools.item.ModItems;
-import net.whiteman.whitemantools.recipe.PurifierChamberRecipe;
-import net.whiteman.whitemantools.screen.PurificationChamberBlockMenu;
+import net.whiteman.whitemantools.recipe.PurificationStationRecipe;
+import net.whiteman.whitemantools.screen.PurificationStationBlockMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class PurificationChamberBlockEntity extends BlockEntity implements MenuProvider {
+public class PurificationStationBlockEntity extends BlockEntity implements MenuProvider {
     private final ItemStackHandler itemHandler = new ItemStackHandler(2);
 
     private static final int INPUT_SLOT = 0;
@@ -43,14 +40,14 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
     private int progress = 0;
     private int maxProgress = 200;
 
-    public PurificationChamberBlockEntity(BlockPos pPos, BlockState pBlockState) {
-        super(ModBlockEntities.PURIFICATION_CHAMBER_BLOCK_BE.get(), pPos, pBlockState);
+    public PurificationStationBlockEntity(BlockPos pPos, BlockState pBlockState) {
+        super(ModBlockEntities.PURIFICATION_STATION_BLOCK_BE.get(), pPos, pBlockState);
         this.data = new ContainerData() {
             @Override
             public int get(int pIndex) {
                 return switch (pIndex) {
-                    case 0 -> PurificationChamberBlockEntity.this.progress;
-                    case 1 -> PurificationChamberBlockEntity.this.maxProgress;
+                    case 0 -> PurificationStationBlockEntity.this.progress;
+                    case 1 -> PurificationStationBlockEntity.this.maxProgress;
                     default -> 0;
                 };
             }
@@ -58,8 +55,8 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
             @Override
             public void set(int pIndex, int pValue) {
                 switch (pIndex) {
-                    case 0 -> PurificationChamberBlockEntity.this.progress = pValue;
-                    case 1 -> PurificationChamberBlockEntity.this.maxProgress = pValue;
+                    case 0 -> PurificationStationBlockEntity.this.progress = pValue;
+                    case 1 -> PurificationStationBlockEntity.this.maxProgress = pValue;
                 }
             }
 
@@ -101,18 +98,18 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("block.whiteman_tools.purification_chamber_block");
+        return Component.translatable("block.whiteman_tools.purification_station_block");
     }
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
-        return new PurificationChamberBlockMenu(pContainerId, pPlayerInventory, this, this.data);
+        return new PurificationStationBlockMenu(pContainerId, pPlayerInventory, this, this.data);
     }
 
     @Override
     protected void saveAdditional(CompoundTag pTag) {
         pTag.put("inventory", itemHandler.serializeNBT());
-        pTag.putInt("purification_chamber_block.progress", progress);
+        pTag.putInt("purification_station_block.progress", progress);
         super.saveAdditional(pTag);
     }
 
@@ -120,7 +117,7 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
     public void load(CompoundTag pTag) {
         super.load(pTag);
         itemHandler.deserializeNBT(pTag.getCompound("inventory"));
-        progress = pTag.getInt("purification_chamber_block.progress");
+        progress = pTag.getInt("purification_station_block.progress");
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
@@ -142,7 +139,7 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
     }
 
     private void craftItem() {
-        Optional<PurifierChamberRecipe> recipe = getCurrentRecipe();
+        Optional<PurificationStationRecipe> recipe = getCurrentRecipe();
         ItemStack result = recipe.get().getResultItem(null);
 
         this.itemHandler.extractItem(INPUT_SLOT, 1, false);
@@ -160,7 +157,7 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
     }
 
     private boolean hasRecipe() {
-        Optional<PurifierChamberRecipe> recipe = getCurrentRecipe();
+        Optional<PurificationStationRecipe> recipe = getCurrentRecipe();
 
         if (recipe.isEmpty()) {
             return false;
@@ -170,13 +167,13 @@ public class PurificationChamberBlockEntity extends BlockEntity implements MenuP
         return canInsertAmountIntoOutputSlot(result.getCount()) && canInsertItemIntoOutputSlot(result.getItem());
     }
 
-    private Optional<PurifierChamberRecipe> getCurrentRecipe() {
+    private Optional<PurificationStationRecipe> getCurrentRecipe() {
         SimpleContainer inventory = new SimpleContainer(this.itemHandler.getSlots());
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             inventory.setItem(i, this.itemHandler.getStackInSlot(i));
         }
 
-        return this.level.getRecipeManager().getRecipeFor(PurifierChamberRecipe.Type.INSTANCE, inventory, level);
+        return this.level.getRecipeManager().getRecipeFor(PurificationStationRecipe.Type.INSTANCE, inventory, level);
     }
 
     private boolean canInsertItemIntoOutputSlot(Item item) {

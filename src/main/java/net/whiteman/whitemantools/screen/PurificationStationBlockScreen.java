@@ -9,11 +9,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.whiteman.whitemantools.WhiteManToolsMod;
 
-public class PurificationChamberBlockScreen extends AbstractContainerScreen<PurificationChamberBlockMenu> {
+public class PurificationStationBlockScreen extends AbstractContainerScreen<PurificationStationBlockMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(WhiteManToolsMod.MOD_ID, "textures/gui/purification_chamber_block_gui.png");
+            new ResourceLocation(WhiteManToolsMod.MOD_ID, "textures/gui/purification_station_block_gui.png");
 
-    public PurificationChamberBlockScreen(PurificationChamberBlockMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
+    public PurificationStationBlockScreen(PurificationStationBlockMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
     }
 

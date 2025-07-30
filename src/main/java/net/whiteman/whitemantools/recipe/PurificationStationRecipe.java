@@ -14,12 +14,12 @@ import net.minecraft.world.level.Level;
 import net.whiteman.whitemantools.WhiteManToolsMod;
 import org.jetbrains.annotations.Nullable;
 
-public class PurifierChamberRecipe implements Recipe<SimpleContainer> {
+public class PurificationStationRecipe implements Recipe<SimpleContainer> {
     private final NonNullList<Ingredient> inputItems;
     private final ItemStack output;
     private final ResourceLocation id;
 
-    public PurifierChamberRecipe(NonNullList<Ingredient> inputItems, ItemStack outputItems, ResourceLocation id) {
+    public PurificationStationRecipe(NonNullList<Ingredient> inputItems, ItemStack outputItems, ResourceLocation id) {
         this.inputItems = inputItems;
         this.output = outputItems;
         this.id = id;
@@ -69,17 +69,17 @@ public class PurifierChamberRecipe implements Recipe<SimpleContainer> {
         return Type.INSTANCE;
     }
 
-    public static class Type implements RecipeType<PurifierChamberRecipe> {
+    public static class Type implements RecipeType<PurificationStationRecipe> {
         public static final Type INSTANCE = new Type();
         public static final String ID = "purification";
     }
 
-    public static class Serializer implements RecipeSerializer<PurifierChamberRecipe> {
+    public static class Serializer implements RecipeSerializer<PurificationStationRecipe> {
         public static final Serializer INSTANCE = new Serializer();
         public static final ResourceLocation ID = new ResourceLocation(WhiteManToolsMod.MOD_ID, "purification");
 
         @Override
-        public PurifierChamberRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
+        public PurificationStationRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
             ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
 
             JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
@@ -89,11 +89,11 @@ public class PurifierChamberRecipe implements Recipe<SimpleContainer> {
                 inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
 
-            return new PurifierChamberRecipe(inputs, output, pRecipeId);
+            return new PurificationStationRecipe(inputs, output, pRecipeId);
         }
 
         @Override
-        public @Nullable PurifierChamberRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
+        public @Nullable PurificationStationRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
             NonNullList<Ingredient> inputs = NonNullList.withSize(pBuffer.readInt(), Ingredient.EMPTY);
 
             for (int i = 0; i < inputs.size(); i++) {
@@ -101,11 +101,11 @@ public class PurifierChamberRecipe implements Recipe<SimpleContainer> {
             }
 
             ItemStack output = pBuffer.readItem();
-            return new PurifierChamberRecipe(inputs, output, pRecipeId);
+            return new PurificationStationRecipe(inputs, output, pRecipeId);
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf pBuffer, PurifierChamberRecipe pRecipe) {
+        public void toNetwork(FriendlyByteBuf pBuffer, PurificationStationRecipe pRecipe) {
             pBuffer.writeInt(pRecipe.inputItems.size());
 
             for (Ingredient ingredient : pRecipe.getIngredients()) {

@@ -23,7 +23,7 @@ public class ModCreativeModTabs {
 
                         pOutput.accept(ModBlocks.UV_LAMP_BLOCK.get());
                         pOutput.accept(ModBlocks.NETHER_ALGANIT_ORE.get());
-                        pOutput.accept(ModBlocks.PURIFICATION_CHAMBER_BLOCK.get());
+                        pOutput.accept(ModBlocks.PURIFICATION_STATION_BLOCK.get());
                         pOutput.accept(ModBlocks.NEOPLASM_BLOCK.get());
                     })
                     .build());

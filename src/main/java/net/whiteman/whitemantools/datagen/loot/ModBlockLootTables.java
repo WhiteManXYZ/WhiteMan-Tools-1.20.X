@@ -24,7 +24,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
     @Override
     protected void generate() {
         this.dropSelf(ModBlocks.UV_LAMP_BLOCK.get());
-        this.dropSelf(ModBlocks.PURIFICATION_CHAMBER_BLOCK.get());
+        this.dropSelf(ModBlocks.PURIFICATION_STATION_BLOCK.get());
         this.dropSelf(ModBlocks.NEOPLASM_BLOCK.get());
 
         this.add(ModBlocks.NETHER_ALGANIT_ORE.get(),

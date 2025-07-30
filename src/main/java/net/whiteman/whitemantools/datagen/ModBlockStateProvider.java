@@ -3,6 +3,7 @@ package net.whiteman.whitemantools.datagen;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 import net.whiteman.whitemantools.WhiteManToolsMod;
@@ -15,7 +16,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        blockWithItem(ModBlocks.PURIFICATION_CHAMBER_BLOCK);
+        horizontalBlock(ModBlocks.PURIFICATION_STATION_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/purification_station_block")));
 
         blockWithItem(ModBlocks.NEOPLASM_BLOCK);
 

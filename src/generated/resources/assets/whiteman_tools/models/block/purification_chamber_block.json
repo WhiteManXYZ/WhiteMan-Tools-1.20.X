@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "whiteman_tools:block/purification_chamber_block"
-  }
-}

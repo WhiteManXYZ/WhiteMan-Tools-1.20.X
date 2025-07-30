@@ -14,8 +14,8 @@ public class ModMenuTypes {
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(ForgeRegistries.MENU_TYPES, WhiteManToolsMod.MOD_ID);
 
-    public static final RegistryObject<MenuType<PurificationChamberBlockMenu>> PURIFICATION_CHAMBER_BLOCK_MENU =
-            registerMenuType("purification_chamber_block_menu", PurificationChamberBlockMenu::new);
+    public static final RegistryObject<MenuType<PurificationStationBlockMenu>> PURIFICATION_STATION_BLOCK_MENU =
+            registerMenuType("purification_station_block_menu", PurificationStationBlockMenu::new);
 
     private static <T extends AbstractContainerMenu>RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> IForgeMenuType.create(factory));

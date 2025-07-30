@@ -1,7 +1,6 @@
 package net.whiteman.whitemantools.screen;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -11,22 +10,21 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 import net.whiteman.whitemantools.block.ModBlocks;
-import net.whiteman.whitemantools.block.entity.PurificationChamberBlockEntity;
-import org.jetbrains.annotations.Nullable;
+import net.whiteman.whitemantools.block.entity.PurificationStationBlockEntity;
 
-public class PurificationChamberBlockMenu extends AbstractContainerMenu {
-    public final PurificationChamberBlockEntity blockEntity;
+public class PurificationStationBlockMenu extends AbstractContainerMenu {
+    public final PurificationStationBlockEntity blockEntity;
     private final Level level;
     private final ContainerData data;
 
-    public PurificationChamberBlockMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
+    public PurificationStationBlockMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
     }
 
-    public PurificationChamberBlockMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
-        super(ModMenuTypes.PURIFICATION_CHAMBER_BLOCK_MENU.get(), pContainerId);
+    public PurificationStationBlockMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
+        super(ModMenuTypes.PURIFICATION_STATION_BLOCK_MENU.get(), pContainerId);
         checkContainerSize(inv, 2);
-        blockEntity = ((PurificationChamberBlockEntity) entity);
+        blockEntity = ((PurificationStationBlockEntity) entity);
         this.level = inv.player.level();
         this.data = data;
 
@@ -106,7 +104,7 @@ public class PurificationChamberBlockMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player pPlayer) {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
-                pPlayer, ModBlocks.PURIFICATION_CHAMBER_BLOCK.get());
+                pPlayer, ModBlocks.PURIFICATION_STATION_BLOCK.get());
     }
 
     private void addPlayerInventory(Inventory playerInventory) {

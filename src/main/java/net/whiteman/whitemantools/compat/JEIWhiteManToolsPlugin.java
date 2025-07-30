@@ -9,9 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.whiteman.whitemantools.WhiteManToolsMod;
-import net.whiteman.whitemantools.recipe.PurifierChamberRecipe;
-import net.whiteman.whitemantools.screen.PurificationChamberBlockScreen;
-import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter;
+import net.whiteman.whitemantools.recipe.PurificationStationRecipe;
+import net.whiteman.whitemantools.screen.PurificationStationBlockScreen;
 
 import java.util.List;
 
@@ -24,20 +23,20 @@ public class JEIWhiteManToolsPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new PurifierChamberCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new PurificationStationCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
-        List<PurifierChamberRecipe> purificationRecipes = recipeManager.getAllRecipesFor(PurifierChamberRecipe.Type.INSTANCE);
-        registration.addRecipes(PurifierChamberCategory.PURIFICATION_TYPE, purificationRecipes);
+        List<PurificationStationRecipe> purificationRecipes = recipeManager.getAllRecipesFor(PurificationStationRecipe.Type.INSTANCE);
+        registration.addRecipes(PurificationStationCategory.PURIFICATION_TYPE, purificationRecipes);
     }
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(PurificationChamberBlockScreen.class, 93, 30, 20, 30,
-                PurifierChamberCategory.PURIFICATION_TYPE);
+        registration.addRecipeClickArea(PurificationStationBlockScreen.class, 93, 30, 20, 30,
+                PurificationStationCategory.PURIFICATION_TYPE);
     }
 }

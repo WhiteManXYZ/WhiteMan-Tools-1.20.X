@@ -1,5 +1,5 @@
-// 1.20.1	2025-07-25T16:25:34.7311125	Loot Tables
+// 1.20.1	2025-07-30T23:06:00.8018303	Loot Tables
 e97546873fcca6648747a4db74cff9e24d4152c1 data/whiteman_tools/loot_tables/blocks/neoplasm_block.json
 61a418c13779c2ee264003008b7e13b8ee6b1a5b data/whiteman_tools/loot_tables/blocks/nether_alganit_ore.json
-3574e9b471e8b240b959202a13bdc795930aa213 data/whiteman_tools/loot_tables/blocks/purification_chamber_block.json
+7bc790e965c5ccb52d2552e551b0a9722fb0cf5c data/whiteman_tools/loot_tables/blocks/purification_station_block.json
 29ddd0f0855979f39c1c1ae249bc1e73a50c540d data/whiteman_tools/loot_tables/blocks/uv_lamp_block.json

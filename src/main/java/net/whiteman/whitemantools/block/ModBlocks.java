@@ -12,7 +12,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.whiteman.whitemantools.WhiteManToolsMod;
-import net.whiteman.whitemantools.block.custom.PurificationChamberBlock;
+import net.whiteman.whitemantools.block.custom.PurificationStationBlock;
 import net.whiteman.whitemantools.block.custom.NeoplasmCoreBlock;
 import net.whiteman.whitemantools.block.custom.RedstoneLampUVBlock;
 import net.whiteman.whitemantools.item.ModItems;
@@ -23,14 +23,15 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, WhiteManToolsMod.MOD_ID);
 
-
+    // TODO: Change destroyTime to strength
     public static final RegistryObject<Block> UV_LAMP_BLOCK = registerBlock("uv_lamp_block",
             () -> new RedstoneLampUVBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP)
                     .destroyTime((float) 1.5)
             ));
 
-    public static final RegistryObject<Block> PURIFICATION_CHAMBER_BLOCK = registerBlock("purification_chamber_block",
-            () -> new PurificationChamberBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)
+    public static final RegistryObject<Block> PURIFICATION_STATION_BLOCK = registerBlock("purification_station_block",
+            () -> new PurificationStationBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)
+                    .noOcclusion()
             ));
 
     public static final RegistryObject<Block> NEOPLASM_BLOCK = registerBlock("neoplasm_block",
