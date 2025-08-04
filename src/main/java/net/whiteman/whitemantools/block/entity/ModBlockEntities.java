@@ -12,7 +12,7 @@ public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, WhiteManToolsMod.MOD_ID);
 
-    public static final RegistryObject<BlockEntityType<PurificationStationBlockEntity>> PURIFICATION_STATION_BLOCK_BE =
+    public static final RegistryObject<BlockEntityType<PurificationStationBlockEntity>> PURIFICATION_STATION_BE =
             BLOCK_ENTITIES.register("purification_station_be", () ->
                     BlockEntityType.Builder.of(PurificationStationBlockEntity::new,
                             ModBlocks.PURIFICATION_STATION_BLOCK.get()).build(null));

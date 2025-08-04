@@ -36,7 +36,7 @@ public class JEIWhiteManToolsPlugin implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(PurificationStationBlockScreen.class, 93, 30, 20, 30,
-                PurificationStationCategory.PURIFICATION_TYPE);
+        //registration.addRecipeClickArea(PurificationStationBlockScreen.class, 93, 30, 20, 30,
+        //        PurificationStationCategory.PURIFICATION_TYPE);
     }
 }

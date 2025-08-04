@@ -54,8 +54,11 @@ public class PurificationStationCategory implements IRecipeCategory<Purification
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PurificationStationRecipe recipe, IFocusGroup focuses) {
+        /*
+         * TODO: Make normal jei recipe
         builder.addSlot(RecipeIngredientRole.INPUT, 80, 17).addIngredients(recipe.getIngredients().get(0));
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 80, 59).addItemStack(recipe.getResultItem(null));
+        */
     }
 }

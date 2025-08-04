@@ -18,6 +18,9 @@ public class ModItems {
     public static final RegistryObject<Item> PURIFIED_ALGANIT = ITEMS.register("purified_alganit",
             () -> new Item(new Item.Properties()));
 
+    public static final RegistryObject<Item> SAND_DUST = ITEMS.register("sand_dust",
+            () -> new Item(new Item.Properties()));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

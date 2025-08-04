@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:sand"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "whiteman_tools:sand_dust"
+  }
+}

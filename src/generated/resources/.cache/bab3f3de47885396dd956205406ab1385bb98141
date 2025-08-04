@@ -1,8 +1,11 @@
-// 1.20.1	2025-07-30T23:06:00.8101827	Block States: whiteman_tools
+// 1.20.1	2025-08-01T00:18:04.3550511	Block States: whiteman_tools
 0a97dfe06d0402f0730d969d4e10a6f0d4724ee2 assets/whiteman_tools/blockstates/neoplasm_block.json
 45a0fa8e16cc4defdf8cad9f82627e70a2d9e401 assets/whiteman_tools/blockstates/nether_alganit_ore.json
-6e387afa945c6f06d5c234b0a7c9c1dfd33e4245 assets/whiteman_tools/blockstates/purification_station_block.json
+d8b5d998f8f62a7840aa4f0741ae07726647a751 assets/whiteman_tools/blockstates/uv_lamp_block.json
 640ccce9be92c992d74e83e71e6425ed697752d1 assets/whiteman_tools/models/block/neoplasm_block.json
 4ebdd43d9e4c1355d5a66b5929ca0f40d61d358c assets/whiteman_tools/models/block/nether_alganit_ore.json
+938ba5686344370e9743bdee6967d812da84e1a5 assets/whiteman_tools/models/block/uv_lamp_block.json
+369318deb1827edb8da22794feb3014b339791d5 assets/whiteman_tools/models/block/uv_lamp_block_lit.json
 4159ac8b2d209b21a80a616ba188aad58b44c29e assets/whiteman_tools/models/item/neoplasm_block.json
 9d2482b26803158b2c4479562394f174d3919933 assets/whiteman_tools/models/item/nether_alganit_ore.json
+48ddffda2e99d91660ba94caaa6e57c7376cb8a2 assets/whiteman_tools/models/item/uv_lamp_block.json

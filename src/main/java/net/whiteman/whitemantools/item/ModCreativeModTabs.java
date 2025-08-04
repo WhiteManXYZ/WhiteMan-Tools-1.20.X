@@ -20,6 +20,7 @@ public class ModCreativeModTabs {
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModItems.ALGANIT.get());
                         pOutput.accept(ModItems.PURIFIED_ALGANIT.get());
+                        pOutput.accept(ModItems.SAND_DUST.get());
 
                         pOutput.accept(ModBlocks.UV_LAMP_BLOCK.get());
                         pOutput.accept(ModBlocks.NETHER_ALGANIT_ORE.get());

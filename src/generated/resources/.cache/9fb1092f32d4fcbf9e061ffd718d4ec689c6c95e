@@ -1,7 +1,11 @@
-// 1.20.1	2025-07-25T17:21:39.4780836	Recipes
+// 1.20.1	2025-08-03T15:26:01.5260783	Recipes
+f5e0b2eccf646ac076870511c0b51b0e516e17f0 data/minecraft/advancements/recipes/misc/sand.json
+8c774351683ef064923bc8ab0b7a1606b34eacc2 data/minecraft/recipes/sand.json
 f930c9551793e722ed49c4af278c943320695f34 data/whiteman_tools/advancements/recipes/misc/alganit_from_blasting_nether_alganit_ore.json
 6f755fa1d871608ebb5ed815cdda8ddaa8e07d07 data/whiteman_tools/advancements/recipes/misc/alganit_from_smelting_nether_alganit_ore.json
+bc0253b5ab5784c26b96145fc1b1d444fc9d2be5 data/whiteman_tools/advancements/recipes/misc/sand_dust.json
 864b1823f93f52a55ff4d491f978c65e1c317efd data/whiteman_tools/advancements/recipes/redstone/uv_lamp_block.json
 b6b665606a172b17d3059c6dc8ba0948d0454921 data/whiteman_tools/recipes/alganit_from_blasting_nether_alganit_ore.json
 9df21f775daa22810f0d6b9ab4aa92827c7bbab8 data/whiteman_tools/recipes/alganit_from_smelting_nether_alganit_ore.json
+7917d5f244beb5ae1298551c2a5b082ad7939f30 data/whiteman_tools/recipes/sand_dust.json
 c4c4ee00da5147a3452a27c69f178e851d2bbf84 data/whiteman_tools/recipes/uv_lamp_block.json

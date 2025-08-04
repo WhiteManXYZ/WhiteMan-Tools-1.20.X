@@ -18,12 +18,12 @@ public class PurificationStationBlockMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public PurificationStationBlockMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
+        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(4));
     }
 
     public PurificationStationBlockMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
         super(ModMenuTypes.PURIFICATION_STATION_BLOCK_MENU.get(), pContainerId);
-        checkContainerSize(inv, 2);
+        checkContainerSize(inv, 4);
         blockEntity = ((PurificationStationBlockEntity) entity);
         this.level = inv.player.level();
         this.data = data;
@@ -32,22 +32,27 @@ public class PurificationStationBlockMenu extends AbstractContainerMenu {
         addPlayerHotbar(inv);
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 80, 17));
-            this.addSlot(new SlotItemHandler(iItemHandler, 1, 80, 59));
+            this.addSlot(new SlotItemHandler(iItemHandler, 0, 71, 40));
+            this.addSlot(new SlotItemHandler(iItemHandler, 1, 127, 40));
+            this.addSlot(new SlotItemHandler(iItemHandler, 2, 17, 43));
+            this.addSlot(new SlotItemHandler(iItemHandler, 3, 17, 17));
         });
 
         addDataSlots(data);
-
     }
 
     public boolean isCrafting() {
         return data.get(0) > 0;
     }
 
+    public int getFuel() {
+        return this.data.get(2);
+    }
+
     public int getScaledProgress() {
         int progress = this.data.get(0);
         int maxProgress = this.data.get(1);
-        int progressArrowSize = 26;
+        int progressArrowSize = 24;
 
         return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }
@@ -67,7 +72,7 @@ public class PurificationStationBlockMenu extends AbstractContainerMenu {
     private static final int VANILLA_FIRST_SLOT_INDEX = 0;
     private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
 
-    private static final int TE_INVENTORY_SLOT_COUNT = 2;  // must be the number of slots you have!
+    private static final int TE_INVENTORY_SLOT_COUNT = 4;  // must be the number of slots you have!
     @Override
     public ItemStack quickMoveStack(Player playerIn, int pIndex) {
         Slot sourceSlot = slots.get(pIndex);

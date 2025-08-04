@@ -20,10 +20,9 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        complexBlock(ModBlocks.PURIFICATION_STATION_BLOCK.get());
-
         simpleItem(ModItems.ALGANIT);
         simpleItem(ModItems.PURIFIED_ALGANIT);
+        simpleItem(ModItems.SAND_DUST);
     }
 
     private ItemModelBuilder complexBlock(Block block) {

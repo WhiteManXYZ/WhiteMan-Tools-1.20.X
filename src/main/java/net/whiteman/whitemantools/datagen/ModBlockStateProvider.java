@@ -1,13 +1,16 @@
 package net.whiteman.whitemantools.datagen;
 
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 import net.whiteman.whitemantools.WhiteManToolsMod;
 import net.whiteman.whitemantools.block.ModBlocks;
+import net.whiteman.whitemantools.block.custom.RedstoneLampUVBlock;
 
 public class ModBlockStateProvider extends BlockStateProvider {
     public ModBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
@@ -16,8 +19,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        horizontalBlock(ModBlocks.PURIFICATION_STATION_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/purification_station_block")));
+        customLamp();
 
         blockWithItem(ModBlocks.NEOPLASM_BLOCK);
 
@@ -26,5 +28,20 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject) {
         simpleBlockWithItem(blockRegistryObject.get(), cubeAll(blockRegistryObject.get()));
+    }
+
+    private void customLamp() {
+        getVariantBuilder(ModBlocks.UV_LAMP_BLOCK.get()).forAllStates(state -> {
+            if(state.getValue(RedstoneLampUVBlock.LIT)) {
+                return new ConfiguredModel[]{new ConfiguredModel(models().cubeAll("uv_lamp_block_lit",
+                        new ResourceLocation(WhiteManToolsMod.MOD_ID, "block/" + "uv_lamp_block_lit")))};
+            } else {
+                return new ConfiguredModel[]{new ConfiguredModel(models().cubeAll("uv_lamp_block",
+                        new ResourceLocation(WhiteManToolsMod.MOD_ID, "block/" +"uv_lamp_block")))};
+            }
+        });
+
+        simpleBlockItem(ModBlocks.UV_LAMP_BLOCK.get(), models().cubeAll("uv_lamp_block",
+                new ResourceLocation(WhiteManToolsMod.MOD_ID, "block/" +"uv_lamp_block")));
     }
 }

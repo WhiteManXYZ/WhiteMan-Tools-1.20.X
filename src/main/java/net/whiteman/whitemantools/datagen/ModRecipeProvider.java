@@ -6,7 +6,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.whiteman.whitemantools.WhiteManToolsMod;
 import net.whiteman.whitemantools.block.ModBlocks;
@@ -32,6 +34,18 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('I', Items.IRON_INGOT)
                 .define('#', Items.REDSTONE_LAMP)
                 .unlockedBy(getHasName(ModItems.PURIFIED_ALGANIT.get()), has(ModItems.PURIFIED_ALGANIT.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.SAND)
+                .pattern("SS")
+                .pattern("SS")
+                .define('S', ModItems.SAND_DUST.get())
+                .unlockedBy(getHasName(Blocks.SAND), has(Blocks.SAND))
+                .save(pWriter);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.SAND_DUST.get(), 4)
+                .requires(Blocks.SAND)
+                .unlockedBy(getHasName(Blocks.SAND), has(Blocks.SAND))
                 .save(pWriter);
 
         oreSmelting(pWriter, ALGANIT_SMELTABLES, RecipeCategory.MISC, ModItems.ALGANIT.get(), 0, 200, "alganit");
