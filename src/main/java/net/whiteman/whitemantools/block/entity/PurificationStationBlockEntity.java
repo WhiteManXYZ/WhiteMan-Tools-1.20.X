@@ -56,7 +56,7 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
     private static final int INPUT_SLOT = 0;
     private static final int OUTPUT_SLOT = 1;
     private static final int FUEL_SLOT = 2;
-    private static final int SECONDARY_INPUT_SLOT = 3;
+    private static final int SECOND_INPUT_SLOT = 3;
 
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 
@@ -101,34 +101,6 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
         };
     }
 
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return lazyItemHandler.cast();
-        }
-        return super.getCapability(cap, side);
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        lazyItemHandler = LazyOptional.of(() -> itemHandler);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        lazyItemHandler.invalidate();
-    }
-
-    public void drops() {
-        SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            inventory.setItem(i, itemHandler.getStackInSlot(i));
-        }
-
-        Containers.dropContents(this.level, this.worldPosition, inventory);
-    }
 
     @Override
     public Component getDisplayName() {
@@ -138,26 +110,6 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
     @Override
     public @Nullable AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
         return new PurificationStationBlockMenu(pContainerId, pPlayerInventory, this, this.data);
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag pTag) {
-        pTag.put("inventory", itemHandler.serializeNBT());
-        pTag.putInt("purification_station_block.progress", progress);
-        pTag.putInt("purification_station_block.fuel", fuel);
-        pTag.putInt("purification_station_block.pressure", pressure);
-        pTag.putInt("purification_station_block.modifier_material", modifier_material);
-        super.saveAdditional(pTag);
-    }
-
-    @Override
-    public void load(CompoundTag pTag) {
-        super.load(pTag);
-        itemHandler.deserializeNBT(pTag.getCompound("inventory"));
-        progress = pTag.getInt("purification_station_block.progress");
-        fuel = pTag.getInt("purification_station_block.fuel");
-        pressure = pTag.getInt("purification_station_block.pressure");
-        modifier_material = pTag.getInt("purification_station_block.modifier_material");
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState, PurificationStationBlockEntity pBlockEntity) {
@@ -173,12 +125,17 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
             setFuel(pBlockEntity);
             setChanged(pLevel, pPos, pState);
         }
-        if (hasRecipe() && pBlockEntity.fuel > 0) {
+        if (noModifierMaterial(pBlockEntity)) {
+            setModifierMaterial(pBlockEntity);
+            setChanged(pLevel, pPos, pState);
+        }
+        if (hasRecipe() && pBlockEntity.fuel > 0 && pBlockEntity.modifier_material > 0) {
             increaseCraftingProgress();
             setChanged(pLevel, pPos, pState);
 
             if (hasProgressFinished()) {
                 --pBlockEntity.fuel;
+                --pBlockEntity.modifier_material;
                 craftItem();
                 resetProgress();
             }
@@ -187,6 +144,17 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
         }
     }
 
+    public void drops() {
+        SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            inventory.setItem(i, itemHandler.getStackInSlot(i));
+        }
+
+        Containers.dropContents(this.level, this.worldPosition, inventory);
+    }
+
+
+    // TODO: make a variables
     private boolean noFuel(PurificationStationBlockEntity pBlockEntity) {
         return pBlockEntity.fuel <= 0 && this.itemHandler.getStackInSlot(FUEL_SLOT).is(Items.COAL);
     }
@@ -194,6 +162,15 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
     private void setFuel(PurificationStationBlockEntity pBlockEntity) {
         pBlockEntity.fuel = 20;
         this.itemHandler.extractItem(FUEL_SLOT, 1, false);
+    }
+
+    private boolean noModifierMaterial(PurificationStationBlockEntity pBlockEntity) {
+        return pBlockEntity.modifier_material <= 0 && this.itemHandler.getStackInSlot(SECOND_INPUT_SLOT).is(ModItems.SAND_DUST.get());
+    }
+
+    private void setModifierMaterial(PurificationStationBlockEntity pBlockEntity) {
+        pBlockEntity.modifier_material = 10;
+        this.itemHandler.extractItem(SECOND_INPUT_SLOT, 1, false);
     }
 
     private void resetProgress() {
@@ -244,5 +221,46 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
 
     private boolean canInsertAmountIntoOutputSlot(int count) {
         return this.itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + count <= this.itemHandler.getStackInSlot(OUTPUT_SLOT).getMaxStackSize();
+    }
+
+
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+            return lazyItemHandler.cast();
+        }
+        return super.getCapability(cap, side);
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag pTag) {
+        pTag.put("inventory", itemHandler.serializeNBT());
+        pTag.putInt("purification_station_block.progress", progress);
+        pTag.putInt("purification_station_block.fuel", fuel);
+        pTag.putInt("purification_station_block.pressure", pressure);
+        pTag.putInt("purification_station_block.modifier_material", modifier_material);
+        super.saveAdditional(pTag);
+    }
+
+    @Override
+    public void load(CompoundTag pTag) {
+        super.load(pTag);
+        itemHandler.deserializeNBT(pTag.getCompound("inventory"));
+        progress = pTag.getInt("purification_station_block.progress");
+        fuel = pTag.getInt("purification_station_block.fuel");
+        pressure = pTag.getInt("purification_station_block.pressure");
+        modifier_material = pTag.getInt("purification_station_block.modifier_material");
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        lazyItemHandler = LazyOptional.of(() -> itemHandler);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        lazyItemHandler.invalidate();
     }
 }

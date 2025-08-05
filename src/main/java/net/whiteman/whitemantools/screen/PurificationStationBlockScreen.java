@@ -35,6 +35,14 @@ public class PurificationStationBlockScreen extends AbstractContainerScreen<Puri
         guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
         renderProgressArrow(guiGraphics, x, y);
         renderFuelBar(guiGraphics, x, y);
+        renderModifierMaterialBar(guiGraphics, x, y);
+    }
+
+    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, delta);
+        renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     private void renderProgressArrow(GuiGraphics guiGraphics, int x, int y) {
@@ -51,10 +59,11 @@ public class PurificationStationBlockScreen extends AbstractContainerScreen<Puri
         }
     }
 
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, delta);
-        renderTooltip(guiGraphics, mouseX, mouseY);
+    private void renderModifierMaterialBar(GuiGraphics guiGraphics, int x, int y) {
+        int modifier_material = this.menu.getModifierMaterial();
+        int barWidth = Mth.clamp((19 * modifier_material + 10 - 1) / 10, 0, 19);
+        if (barWidth > 0) {
+            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 70, y + 17, 176, 21, barWidth, 8);
+        }
     }
 }

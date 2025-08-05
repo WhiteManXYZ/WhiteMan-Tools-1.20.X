@@ -18,7 +18,7 @@ public class PurificationStationBlockMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public PurificationStationBlockMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(4));
+        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(5));
     }
 
     public PurificationStationBlockMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
@@ -39,22 +39,6 @@ public class PurificationStationBlockMenu extends AbstractContainerMenu {
         });
 
         addDataSlots(data);
-    }
-
-    public boolean isCrafting() {
-        return data.get(0) > 0;
-    }
-
-    public int getFuel() {
-        return this.data.get(2);
-    }
-
-    public int getScaledProgress() {
-        int progress = this.data.get(0);
-        int maxProgress = this.data.get(1);
-        int progressArrowSize = 24;
-
-        return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }
 
     // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
@@ -124,5 +108,25 @@ public class PurificationStationBlockMenu extends AbstractContainerMenu {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
+    }
+
+    public boolean isCrafting() {
+        return data.get(0) > 0;
+    }
+
+    public int getFuel() {
+        return this.data.get(2);
+    }
+
+    public int getModifierMaterial() {
+        return this.data.get(4);
+    }
+
+    public int getScaledProgress() {
+        int progress = this.data.get(0);
+        int maxProgress = this.data.get(1);
+        int progressArrowSize = 24;
+
+        return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }
 }
