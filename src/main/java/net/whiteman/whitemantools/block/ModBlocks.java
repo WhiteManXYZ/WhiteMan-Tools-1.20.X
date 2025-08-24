@@ -23,10 +23,9 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, WhiteManToolsMod.MOD_ID);
 
-    // TODO: Change destroyTime to strength
     public static final RegistryObject<Block> UV_LAMP_BLOCK = registerBlock("uv_lamp_block",
             () -> new RedstoneLampUVBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP)
-                    .destroyTime((float) 1.5)
+                    .strength(1.2F)
             ));
 
     public static final RegistryObject<Block> PURIFICATION_STATION_BLOCK = registerBlock("purification_station_block",
@@ -36,7 +35,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> NEOPLASM_BLOCK = registerBlock("neoplasm_block",
             () -> new NeoplasmCoreBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
-                    .destroyTime((float) 2.0)
+                    .strength(0.3f)
             ));
 
     public static final RegistryObject<Block> NETHER_ALGANIT_ORE = registerBlock("nether_alganit_ore",

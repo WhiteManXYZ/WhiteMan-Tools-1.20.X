@@ -18,7 +18,7 @@ public class PurificationStationBlockMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public PurificationStationBlockMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(5));
+        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(6));
     }
 
     public PurificationStationBlockMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
@@ -118,8 +118,14 @@ public class PurificationStationBlockMenu extends AbstractContainerMenu {
         return this.data.get(2);
     }
 
+    public int getPressure() {return this.data.get(3); }
+
     public int getModifierMaterial() {
         return this.data.get(4);
+    }
+
+    public int getFuelConvertationProgress() {
+        return this.data.get(5);
     }
 
     public int getScaledProgress() {
