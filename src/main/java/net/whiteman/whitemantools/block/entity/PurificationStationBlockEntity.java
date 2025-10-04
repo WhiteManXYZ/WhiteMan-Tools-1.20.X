@@ -152,13 +152,13 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
             }
         }
         // Crafting (purification)
-        if (hasRecipe() && pBlockEntity.pressure > 0 && pBlockEntity.modifier_material > 0) {
+        if (hasRecipe() && pBlockEntity.pressure > 5 && pBlockEntity.modifier_material > 0) {
             pBlockEntity.progress += 1;
             setChanged(pLevel, pPos, pState);
 
             if (pBlockEntity.progress >= pBlockEntity.purificationTime) {
                 --pBlockEntity.modifier_material;
-                --pBlockEntity.pressure;
+                pBlockEntity.pressure -= 5;
                 craftItem();
                 pBlockEntity.progress = 0;
             }
