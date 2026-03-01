@@ -1,0 +1,14 @@
+{
+  "item.biosanity.alganit": "Альганит",
+  "item.biosanity.purified_alganit": "Очищенный альганит",
+  "item.biosanity.sand_dust": "Молотый песок",
+
+  "block.biosanity.uv_lamp_block": "Редстоуновый УФ-Фонарь",
+  "block.biosanity.nether_alganit_ore": "Альганитовая руда",
+  "block.biosanity.purification_station_block": "Очиститель",
+  "block.biosanity.neoplasm_block": "Новообразование",
+  "block.biosanity.neoplasm_vein_block": "Вена",
+  "block.biosanity.neoplasm_devour_block": "Пожранное",
+
+  "creativetab.biosanity_tab": "Biosanity"
+}

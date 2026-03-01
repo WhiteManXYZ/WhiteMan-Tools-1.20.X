@@ -1,0 +1,12 @@
+{
+  "type": "biosanity:purification",
+  "ingredients": [
+    {
+      "item": "biosanity:alganit"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "item": "biosanity:purified_alganit"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "item.biosanity.alganit": "Alganit",
+  "item.biosanity.purified_alganit": "Purified alganit",
+  "item.biosanity.sand_dust": "Sand dust",
+
+  "block.biosanity.uv_lamp_block": "Redstone UV-Lamp",
+  "block.biosanity.nether_alganit_ore": "Alganit ore",
+  "block.biosanity.purification_station_block": "Purifier",
+  "block.biosanity.neoplasm_block": "Neoplasm",
+  "block.biosanity.neoplasm_vein_block": "Vein",
+  "block.biosanity.neoplasm_devour_block": "Devoured",
+
+  "creativetab.biosanity_tab": "Biosanity"
+}
