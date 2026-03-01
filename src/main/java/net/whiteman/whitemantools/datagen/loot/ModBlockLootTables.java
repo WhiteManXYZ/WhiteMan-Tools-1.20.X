@@ -13,6 +13,7 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.registries.RegistryObject;
 import net.whiteman.whitemantools.block.ModBlocks;
 import net.whiteman.whitemantools.item.ModItems;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -26,6 +27,8 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(ModBlocks.UV_LAMP_BLOCK.get());
         this.dropSelf(ModBlocks.PURIFICATION_STATION_BLOCK.get());
         this.dropSelf(ModBlocks.NEOPLASM_BLOCK.get());
+        this.dropSelf(ModBlocks.NEOPLASM_VEIN_BLOCK.get());
+        this.dropSelf(ModBlocks.NEOPLASM_DEVOUR_BLOCK.get());
 
         this.add(ModBlocks.NETHER_ALGANIT_ORE.get(),
                 block -> createCustomOreDrops(ModBlocks.NETHER_ALGANIT_ORE.get(), ModItems.ALGANIT.get(), 1, 1));
@@ -40,7 +43,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
     }
 
     @Override
-    protected Iterable<Block> getKnownBlocks() {
+    protected @NotNull Iterable<Block> getKnownBlocks() {
         return ModBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
     }
 }

@@ -1,9 +1,11 @@
-package net.whiteman.whitemantools.block.custom;
+package net.whiteman.whitemantools.block.custom.neoplasm;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.whiteman.whitemantools.block.ModBlocks;
 
 public class NeoplasmCoreBlock extends NeoplasmBlock {
     public NeoplasmCoreBlock(Properties pProperties) { super(pProperties); }

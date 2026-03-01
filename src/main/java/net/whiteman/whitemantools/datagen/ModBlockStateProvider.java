@@ -23,6 +23,10 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
         blockWithItem(ModBlocks.NEOPLASM_BLOCK);
 
+        blockWithItem(ModBlocks.NEOPLASM_VEIN_BLOCK);
+
+        blockWithItem(ModBlocks.NEOPLASM_DEVOUR_BLOCK);
+
         blockWithItem(ModBlocks.NETHER_ALGANIT_ORE);
     }
 

@@ -9,6 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.whiteman.whitemantools.WhiteManToolsMod;
+import net.whiteman.whitemantools.block.entity.PurificationStationBlockEntity;
+import org.jetbrains.annotations.NotNull;
 
 public class PurificationStationBlockScreen extends AbstractContainerScreen<PurificationStationBlockMenu> {
     private static final ResourceLocation PURIFICATION_STATION_TEXTURE =
@@ -35,14 +37,14 @@ public class PurificationStationBlockScreen extends AbstractContainerScreen<Puri
 
         guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
         renderProgressArrow(guiGraphics, x, y);
-        renderFuelConvertationBubbles(guiGraphics, x, y);
+        renderFuelConversionBubbles(guiGraphics, x, y);
         renderFuelBar(guiGraphics, x, y);
         renderModifierMaterialBar(guiGraphics, x, y);
         renderPressureBar(guiGraphics, x, y);
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, delta);
         renderTooltip(guiGraphics, mouseX, mouseY);
@@ -54,8 +56,8 @@ public class PurificationStationBlockScreen extends AbstractContainerScreen<Puri
         }
     }
 
-    private void renderFuelConvertationBubbles(GuiGraphics guiGraphics, int x, int y) {
-        int progress = this.menu.getFuelConvertationProgress();
+    private void renderFuelConversionBubbles(GuiGraphics guiGraphics, int x, int y) {
+        int progress = this.menu.getFuelConversionProgress();
         
         int frame = BUBBLELENGTHS[progress / 4 % BUBBLELENGTHS.length];
         if (frame > 0) {
@@ -65,7 +67,8 @@ public class PurificationStationBlockScreen extends AbstractContainerScreen<Puri
 
     private void renderFuelBar(GuiGraphics guiGraphics, int x, int y) {
         int fuel = this.menu.getFuel();
-        int barWidth = Mth.clamp((18 * fuel + 20 - 1) / 20, 0, 18);
+        int fuel_max_count = PurificationStationBlockEntity.MAX_FUEL_COUNT;
+        int barWidth = Mth.clamp((18 * fuel + fuel_max_count - 1) / fuel_max_count, 0, 18);
         if (barWidth > 0) {
             guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 50, y + 64, 176, 17, barWidth, 4);
         }
@@ -73,7 +76,8 @@ public class PurificationStationBlockScreen extends AbstractContainerScreen<Puri
 
     private void renderModifierMaterialBar(GuiGraphics guiGraphics, int x, int y) {
         int modifier_material = this.menu.getModifierMaterial();
-        int barWidth = Mth.clamp((19 * modifier_material + 10 - 1) / 10, 0, 19);
+        int modifier_max_count = PurificationStationBlockEntity.MAX_MODIFIER_COUNT;
+        int barWidth = Mth.clamp((19 * modifier_material + modifier_max_count - 1) / modifier_max_count, 0, 19);
         if (barWidth > 0) {
             guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 70, y + 17, 176, 21, barWidth, 8);
         }
@@ -82,35 +86,21 @@ public class PurificationStationBlockScreen extends AbstractContainerScreen<Puri
     private void renderPressureBar(GuiGraphics guiGraphics, int x, int y) {
         int pressure = this.menu.getPressure();
 
-        if (pressure < 10)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 205, 0, 17, 17);
-        if (pressure >= 10 && pressure < 20)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 205, 17, 17, 17);
-        if (pressure >= 20 && pressure < 30)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 205, 34, 17, 17);
-        if (pressure >= 30 && pressure < 40)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 205, 51, 17, 17);
-        if (pressure >= 40 && pressure < 50)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 222, 0, 17, 17);
-        if (pressure >= 50 && pressure < 60)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 222, 17, 17, 17);
-        if (pressure >= 60 && pressure < 70)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 222, 34, 17, 17);
-        if (pressure >= 70 && pressure < 80)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 222, 51, 17, 17);
-        if (pressure >= 80 && pressure < 90)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 239, 0, 17, 17);
-        if (pressure >= 90 && pressure < 100)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 239, 17, 17, 17);
-        if (pressure >= 100 && pressure < 110)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 239, 34, 17, 17);
-        if (pressure >= 110 && pressure < 120)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 239, 51, 17, 17);
-        if (pressure >= 120 && pressure < 130)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 239, 68, 17, 17);
-        if (pressure >= 130 && pressure < 140)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 239, 85, 17, 17);
-        if (pressure >= 140)
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, 239, 102, 17, 17);
+        // Get the frame index. Divide by 10, limiting to a maximum of frame 13
+        // TODO(whiteman) REMOVE USELESS FRAME FROM GUI TEXTURE
+        int frame = Math.min(pressure / 10, 13);
+        // Determine in which column (U) our frame is located
+        int column = Math.min(frame / 4, 2);
+        // Resolving U coordinate
+        int u = 205 + (column * 17);
+        // Resolving V coordinate
+        int v;
+        if (column < 2) {
+            v = (frame % 4) * 17;
+        } else {
+            v = (frame - 8) * 17;
+        }
+
+        guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 152, y + 16, u, v, 17, 17);
     }
 }

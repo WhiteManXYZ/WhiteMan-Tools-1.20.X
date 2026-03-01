@@ -1,9 +1,9 @@
 package net.whiteman.whitemantools.block;
 
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -13,8 +13,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.whiteman.whitemantools.WhiteManToolsMod;
 import net.whiteman.whitemantools.block.custom.PurificationStationBlock;
-import net.whiteman.whitemantools.block.custom.NeoplasmCoreBlock;
 import net.whiteman.whitemantools.block.custom.RedstoneLampUVBlock;
+import net.whiteman.whitemantools.block.custom.neoplasm.NeoplasmCoreBlock;
+import net.whiteman.whitemantools.block.custom.neoplasm.NeoplasmDevourBlock;
+import net.whiteman.whitemantools.block.custom.neoplasm.NeoplasmVeinBlock;
 import net.whiteman.whitemantools.item.ModItems;
 
 import java.util.function.Supplier;
@@ -36,6 +38,19 @@ public class ModBlocks {
     public static final RegistryObject<Block> NEOPLASM_BLOCK = registerBlock("neoplasm_block",
             () -> new NeoplasmCoreBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
                     .strength(0.3f)
+                    .randomTicks()
+            ));
+
+    public static final RegistryObject<Block> NEOPLASM_DEVOUR_BLOCK = registerBlock("neoplasm_devour_block",
+            () -> new NeoplasmDevourBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
+                    .strength(0.5f)
+                    .randomTicks()
+            ));
+
+    public static final RegistryObject<Block> NEOPLASM_VEIN_BLOCK = registerBlock("neoplasm_vein_block",
+            () -> new NeoplasmVeinBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
+                    .strength(0.5f)
+                    .randomTicks()
             ));
 
     public static final RegistryObject<Block> NETHER_ALGANIT_ORE = registerBlock("nether_alganit_ore",

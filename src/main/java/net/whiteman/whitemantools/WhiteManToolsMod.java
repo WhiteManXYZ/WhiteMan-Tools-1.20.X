@@ -14,6 +14,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.whiteman.whitemantools.block.ModBlocks;
+import net.whiteman.whitemantools.block.custom.neoplasm.NeoplasmUtils;
 import net.whiteman.whitemantools.block.entity.ModBlockEntities;
 import net.whiteman.whitemantools.item.ModCreativeModTabs;
 import net.whiteman.whitemantools.item.ModItems;
@@ -50,7 +51,10 @@ public class WhiteManToolsMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-
+        event.enqueueWork(() -> {
+            NeoplasmUtils.setup();
+            LOGGER.info("Neoplasm Resource Map Initialized!");
+        });
     }
 
     // Add the example block item to the building blocks tab

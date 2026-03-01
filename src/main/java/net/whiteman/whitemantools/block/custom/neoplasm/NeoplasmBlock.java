@@ -1,4 +1,4 @@
-package net.whiteman.whitemantools.block.custom;
+package net.whiteman.whitemantools.block.custom.neoplasm;
 
 import net.minecraft.world.level.block.Block;
 

@@ -7,6 +7,8 @@
   "block.whiteman_tools.nether_alganit_ore": "Alganit ore",
   "block.whiteman_tools.purification_station_block": "Purifier",
   "block.whiteman_tools.neoplasm_block": "Neoplasm",
+  "block.whiteman_tools.neoplasm_vein_block": "Vein",
+  "block.whiteman_tools.neoplasm_devour_block": "Devoured",
 
   "creativetab.whiteman_tools_tab": "WhiteMan's Tools"
 }

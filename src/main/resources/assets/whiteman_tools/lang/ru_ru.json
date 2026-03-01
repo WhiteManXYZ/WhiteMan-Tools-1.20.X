@@ -7,6 +7,8 @@
   "block.whiteman_tools.nether_alganit_ore": "Альганитовая руда",
   "block.whiteman_tools.purification_station_block": "Очиститель",
   "block.whiteman_tools.neoplasm_block": "Новообразование",
+  "block.whiteman_tools.neoplasm_vein_block": "Вена",
+  "block.whiteman_tools.neoplasm_devour_block": "Пожранное",
 
   "creativetab.whiteman_tools_tab": "Инструменты WhiteMan-а"
 }
