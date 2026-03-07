@@ -1,6 +1,5 @@
 package net.whiteman.biosanity;
 
-import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -25,7 +24,6 @@ import net.whiteman.biosanity.item.ModItems;
 import net.whiteman.biosanity.recipe.ModRecipes;
 import net.whiteman.biosanity.screen.ModMenuTypes;
 import net.whiteman.biosanity.screen.PurificationStationBlockScreen;
-import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(BiosanityMod.MOD_ID)
@@ -33,7 +31,7 @@ public class BiosanityMod {
     // Define mod id in a common place for everything to reference
     public static final String MOD_ID = "biosanity";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    //private static final Logger LOGGER = LogUtils.getLogger();
 
     public BiosanityMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -55,11 +53,7 @@ public class BiosanityMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            NeoplasmUtils.setup();
-            //TODO remove this
-            LOGGER.info("Neoplasm Resource Map Initialized!");
-        });
+        event.enqueueWork(NeoplasmUtils::setup);
     }
 
     // Add the example block item to the building blocks tab
@@ -84,7 +78,7 @@ public class BiosanityMod {
             MenuScreens.register(ModMenuTypes.PURIFICATION_STATION_BLOCK_MENU.get(), PurificationStationBlockScreen::new);
 
             event.enqueueWork(() -> {
-                // If block has overlays we add block here
+                // If block has overlays we add his here
                 ItemBlockRenderTypes.setRenderLayer(ModBlocks.NEOPLASM_ROT_BLOCK.get(), RenderType.translucent());
             });
         }
