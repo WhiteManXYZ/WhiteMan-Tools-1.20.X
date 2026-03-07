@@ -45,8 +45,10 @@ public class NeoplasmRotBlock extends NeoplasmBlock implements EntityBlock {
     @Override
     public void randomTick(@NotNull BlockState pState, @NotNull ServerLevel pLevel, @NotNull BlockPos pPos, @NotNull RandomSource pRandom) {
         if (pLevel.getBlockEntity(pPos) instanceof NeoplasmRotBlockEntity be) {
-            if (be.getDropChance() > 0)
-                be.decreaseChance();
+            int currentStage = be.getOverlayStage();
+            if (currentStage < NeoplasmRotBlockEntity.MAX_STAGES - 1) {
+                be.setInfectionStage(currentStage + 1);
+            }
         }
     }
 
@@ -61,8 +63,8 @@ public class NeoplasmRotBlock extends NeoplasmBlock implements EntityBlock {
             BlockState original = be.getOriginalState();
 
             if (!player.isCreative()) {
-                double currentChance = be.getDropChance();
-                if (level.random.nextFloat() < currentChance && (!original.isAir() && player.hasCorrectToolForDrops(original))) {
+                double currentChance = be.getCurrentDropChance();
+                if (level.random.nextDouble() < currentChance && (!original.isAir() && player.hasCorrectToolForDrops(original))) {
                     // We want the broken block to use a drop table, not the block itself
                     // If player has correct tool for block
                     LootParams.Builder builder = new LootParams.Builder((ServerLevel) level)
