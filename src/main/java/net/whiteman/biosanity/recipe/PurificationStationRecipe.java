@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.whiteman.biosanity.BiosanityMod;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PurificationStationRecipe implements Recipe<SimpleContainer> {
@@ -25,47 +26,48 @@ public class PurificationStationRecipe implements Recipe<SimpleContainer> {
         this.id = id;
     }
 
+
     @Override
-    public boolean matches(SimpleContainer pContainer, Level pLevel) {
-        if (pLevel.isClientSide()) {
+    public boolean matches(@NotNull SimpleContainer container, Level level) {
+        if (level.isClientSide()) {
             return false;
         }
 
-        return inputItems.get(0).test(pContainer.getItem(0));
+        return inputItems.get(0).test(container.getItem(0));
     }
 
     @Override
-    public NonNullList<Ingredient> getIngredients() {
+    public @NotNull NonNullList<Ingredient> getIngredients() {
         return inputItems;
     }
 
     @Override
-    public ItemStack assemble(SimpleContainer pContainer, RegistryAccess pRegistryAccess) {
+    public @NotNull ItemStack assemble(@NotNull SimpleContainer container, @NotNull RegistryAccess registryAccess) {
         return output.copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(int pWidth, int pHeight) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
+    public @NotNull ItemStack getResultItem(@NotNull RegistryAccess registryAccess) {
         return output.copy();
     }
 
     @Override
-    public ResourceLocation getId() {
+    public @NotNull ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return Serializer.INSTANCE;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public @NotNull RecipeType<?> getType() {
         return Type.INSTANCE;
     }
 
@@ -79,40 +81,38 @@ public class PurificationStationRecipe implements Recipe<SimpleContainer> {
         public static final ResourceLocation ID = new ResourceLocation(BiosanityMod.MOD_ID, "purification");
 
         @Override
-        public PurificationStationRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
-            ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, "output"));
+        public @NotNull PurificationStationRecipe fromJson(@NotNull ResourceLocation recipeId, @NotNull JsonObject serializedRecipe) {
+            ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(serializedRecipe, "output"));
 
-            JsonArray ingredients = GsonHelper.getAsJsonArray(pSerializedRecipe, "ingredients");
+            JsonArray ingredients = GsonHelper.getAsJsonArray(serializedRecipe, "ingredients");
             NonNullList<Ingredient> inputs = NonNullList.withSize(1, Ingredient.EMPTY);
 
             for (int i = 0; i < inputs.size(); i++){
                 inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
 
-            return new PurificationStationRecipe(inputs, output, pRecipeId);
+            return new PurificationStationRecipe(inputs, output, recipeId);
         }
 
         @Override
-        public @Nullable PurificationStationRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-            NonNullList<Ingredient> inputs = NonNullList.withSize(pBuffer.readInt(), Ingredient.EMPTY);
+        public @Nullable PurificationStationRecipe fromNetwork(@NotNull ResourceLocation recipeId, FriendlyByteBuf buffer) {
+            NonNullList<Ingredient> inputs = NonNullList.withSize(buffer.readInt(), Ingredient.EMPTY);
 
-            for (int i = 0; i < inputs.size(); i++) {
-                inputs.set(i, Ingredient.fromNetwork(pBuffer));
-            }
+            inputs.replaceAll(ignored -> Ingredient.fromNetwork(buffer));
 
-            ItemStack output = pBuffer.readItem();
-            return new PurificationStationRecipe(inputs, output, pRecipeId);
+            ItemStack output = buffer.readItem();
+            return new PurificationStationRecipe(inputs, output, recipeId);
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf pBuffer, PurificationStationRecipe pRecipe) {
-            pBuffer.writeInt(pRecipe.inputItems.size());
+        public void toNetwork(FriendlyByteBuf buffer, PurificationStationRecipe recipe) {
+            buffer.writeInt(recipe.inputItems.size());
 
-            for (Ingredient ingredient : pRecipe.getIngredients()) {
-                ingredient.toNetwork(pBuffer);
+            for (Ingredient ingredient : recipe.getIngredients()) {
+                ingredient.toNetwork(buffer);
             }
 
-            pBuffer.writeItemStack(pRecipe.getResultItem(null), false);
+            buffer.writeItemStack(recipe.getResultItem(RegistryAccess.EMPTY), false);
         }
     }
 }
