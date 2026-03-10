@@ -41,7 +41,7 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
     private static final int OUTPUT_SLOT = 1;
     private static final int FUEL_SLOT = 2;
     private static final int SECOND_INPUT_SLOT = 3;
-    private static final int NECESSARY_PRESSURE_FOR_ITEM = 35;
+    private static final int NECESSARY_PRESSURE_FOR_ITEM = 30;
     private static final int FUEL_CONVERSION_TIME = 50;
     private static final int MAX_PRESSURE = 140;
     
