@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class PurificationStationBlockScreen extends AbstractContainerScreen<PurificationStationBlockMenu> {
     private static final ResourceLocation PURIFICATION_STATION_TEXTURE =
             new ResourceLocation(BiosanityMod.MOD_ID, "textures/gui/purification_station_block_gui.png");
-    private static final int[] BUBBLELENGTHS = new int[]{0, 5, 10};
+    private static final int[] BUBBLE_LENGTHS = new int[]{0, 6, 11};
 
     public PurificationStationBlockScreen(PurificationStationBlockMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -52,16 +52,16 @@ public class PurificationStationBlockScreen extends AbstractContainerScreen<Puri
 
     private void renderProgressArrow(GuiGraphics guiGraphics, int x, int y) {
         if(menu.isCrafting()) {
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 92, y + 40, 176, 0, menu.getScaledProgress(), 16);
+            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 92, y + 39, 176, 0, menu.getScaledProgress(), 16);
         }
     }
 
     private void renderFuelConversionBubbles(GuiGraphics guiGraphics, int x, int y) {
         int progress = this.menu.getFuelConversionProgress();
         
-        int frame = BUBBLELENGTHS[progress / 4 % BUBBLELENGTHS.length];
+        int frame = BUBBLE_LENGTHS[progress / 4 % BUBBLE_LENGTHS.length];
         if (frame > 0) {
-            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 54, y + 51 + 10 - frame, 176, 39 - frame, 11, frame);
+            guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 54, y + 51 + 11 - frame, 176, 40 - frame, 11, frame);
         }
     }
 
