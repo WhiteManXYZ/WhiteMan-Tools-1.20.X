@@ -21,10 +21,11 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
     // Base params
-    private static final double BRANCHING_CHANCE = 0.015;
-    private static final double FALL_CHANCE = 0.75f;
-    private static final double ORIGINAL_DIRECTION_CHANCE = 0.45f;
+    private static final double BRANCHING_CHANCE = 0.02;
+    private static final double FALL_CHANCE = 0.75;
+    private static final double ORIGINAL_DIRECTION_CHANCE = 0.45;
     private static final int REROLL_ATTEMPTS = 10;
+    private static final double MATURE_CHANCE = 0.002;
     // Tick rate params
     private static final int MIN_TICKS_TO_SPREAD = 140;
     private static final int MAX_TICKS_TO_SPREAD = 400;
@@ -49,6 +50,11 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
     /// WIP
     /// Fix removing the end leads to stupor?
     private void performGrowth(ServerLevel level, BlockPos pos, BlockState state, RandomSource random) {
+        // There a chance to just grow up and end vein chain
+        if (random.nextDouble() < MATURE_CHANCE) {
+            level.setBlock(pos, state.setValue(MATURE, true), 3);
+            return;
+        }
         // Original dir contains original "root vein" direction
         Direction originalDir = state.getValue(FACING);
         Direction growDir = (random.nextDouble() < ORIGINAL_DIRECTION_CHANCE) ? originalDir : Direction.getRandom(random);
@@ -110,41 +116,47 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
     // Has a chance to "split" in different directions
     // by just not setting current vein into mature
     // and changing original grow direction (to spread nor in 1 dir.)
-    private void grow(ServerLevel level, BlockPos pos, BlockState state, RandomSource random, BlockPos targetPos, Direction parentDir, Direction growDir) {
+    private void grow(ServerLevel level, BlockPos pos, BlockState state, RandomSource random, BlockPos targetPos, Direction originalDir, Direction growDir) {
         if (random.nextDouble() > BRANCHING_CHANCE) {
             // Target block
-            level.setBlock(targetPos, this.defaultBlockState().setValue(FACING, parentDir), 3);
+            level.setBlock(targetPos, this.defaultBlockState().setValue(FACING, originalDir), 3);
             scheduleNextTick(level, targetPos);
             // Current block
             level.setBlock(pos, state.setValue(MATURE, true), 3);
         } else {
-            // Branch direction calculator
-            // TODO(whiteman) make shoots to grow sideways correct
-            Direction branchDir = null;
-            for (Direction dir : Direction.values()) {
-                if (pos.relative(dir).equals(targetPos)) {
-                    branchDir = dir;
-                    break;
-                }
-            }
-
-            Direction nextDir;
-
-            if (branchDir == null || branchDir.getAxis() == growDir.getAxis() || branchDir.getAxis().isVertical()) {
-                do {
-                    nextDir = Direction.getRandom(random);
-                } while (nextDir.getAxis().isVertical() || nextDir.getAxis() == growDir.getAxis());
-            } else {
-                nextDir = branchDir;
-            }
-
+            Direction nextDir = calculateOriginalDirection(pos, random, targetPos, originalDir);
+            if (nextDir == null) return;
             // Only target block
-            level.setBlock(targetPos, this.defaultBlockState().setValue(FACING, nextDir), 3);
+            boolean block = level.setBlock(targetPos, this.defaultBlockState().setValue(FACING, nextDir), 3);
             scheduleNextTick(level, targetPos);
         }
     }
 
-    private boolean conditions(Direction originalDir, Direction growDir, Level level, BlockPos targetPos) {
+    private static Direction calculateOriginalDirection(BlockPos pos, RandomSource random, BlockPos targetPos, Direction originalDir) {
+        // Branch direction calculator
+        Direction branchDir = null;
+        Direction nextDir;
+        // Calculating relative coordinates
+        for (Direction dir : Direction.values()) {
+            if (targetPos.relative(dir.getOpposite()).equals(pos)) {
+                branchDir = dir;
+                break;
+            }
+        }
+        if (branchDir == null) return null;
+
+        // Don't allow to set facing vertical
+        // or opposite from original direction
+        if (branchDir.getAxis().isVertical()) {
+            do {
+                branchDir = Direction.getRandom(random);
+            } while (branchDir.getAxis().isVertical() || branchDir == originalDir.getOpposite());
+        }
+        nextDir = branchDir;
+        return nextDir;
+    }
+
+    private static boolean conditions(Direction originalDir, Direction growDir, Level level, BlockPos targetPos) {
         // Don't allow to grow backwards
         if (growDir == originalDir.getOpposite()) return false;
         // Don't allow to climb up without wall
@@ -153,13 +165,13 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
         return true;
     }
 
-    private int spreadSpeedModifiers(Level level, double delay) {
+    private static int spreadSpeedModifiers(Level level, double delay) {
         if (level.isRaining()) delay *= RAIN_WEATHER_SPREAD_MODIFIER;
         if (level.isNight()) delay *= NIGHT_SPREAD_MODIFIER;
         return (int) Math.ceil(delay);
     }
 
-    private boolean hasNoWallNearby(Level level, BlockPos pos) {
+    private static boolean hasNoWallNearby(Level level, BlockPos pos) {
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 for (int z = -1; z <= 1; z++) {
@@ -179,7 +191,7 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
         return true;
     }
 
-    private boolean hasNeoplasmNearby(Level level, BlockPos targetPos, BlockPos currentPos) {
+    private static boolean hasNeoplasmNearby(Level level, BlockPos targetPos, BlockPos currentPos) {
         for (Direction d : Direction.values()) {
             BlockPos neighbor = targetPos.relative(d);
             if (!neighbor.equals(currentPos) && level.getBlockState(neighbor).getBlock() instanceof NeoplasmBlock) {
@@ -203,7 +215,7 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
         if (!state.getValue(MATURE)) {
             // Random tick for faster spread and
             // if block schedule chain is broken, trying to launch it again
-            this.performGrowth(level, pos, state, random);
+            performGrowth(level, pos, state, random);
         }
     }
 
