@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.whiteman.biosanity.BiosanityMod;
+import net.whiteman.biosanity.block.entity.PurificationStationBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +27,10 @@ public class PurificationStationRecipe implements Recipe<SimpleContainer> {
         this.id = id;
     }
 
+
+    public int getPurificationTime() {
+        return PurificationStationBlockEntity.PURIFICATION_TIME;
+    }
 
     @Override
     public boolean matches(@NotNull SimpleContainer container, Level level) {
