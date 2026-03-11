@@ -57,6 +57,29 @@ public class PurificationStationCategory implements IRecipeCategory<Purification
         this.modifierIcon = helper.createDrawable(PURIFICATION_STATION_TEXTURE, 176, 21, 19, 8);
     }
 
+    private void drawPurificationTime(@NotNull PurificationStationRecipe recipe, @NotNull GuiGraphics guiGraphics, int y) {
+        int purificationTime = recipe.getPurificationTime();
+        if (purificationTime > 0) {
+            int purificationSeconds = purificationTime / 20;
+            Component timeString = Component.translatable("gui.jei.category.smelting.time.seconds", purificationSeconds);
+            Minecraft minecraft = Minecraft.getInstance();
+            Font fontRenderer = minecraft.font;
+            int stringWidth = fontRenderer.width(timeString);
+            guiGraphics.drawString(fontRenderer, timeString, getWidth() - stringWidth, y, 0xFF808080, false);
+        }
+    }
+
+    @Override
+    public void draw(@NotNull PurificationStationRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        IRecipeCategory.super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY);
+        this.animatedArrow.draw(guiGraphics, 44, 23);
+        bubbles.draw(guiGraphics, 6, 35);
+        pressureIcon.draw(guiGraphics, 104, 0);
+        fuelIcon.draw(guiGraphics, 2, 48);
+        modifierIcon.draw(guiGraphics, 22, 1);
+
+        drawPurificationTime(recipe, guiGraphics, 49);
+    }
 
     @Override
     public @NotNull RecipeType<PurificationStationRecipe> getRecipeType() {
@@ -82,24 +105,6 @@ public class PurificationStationCategory implements IRecipeCategory<Purification
     public void setRecipe(IRecipeLayoutBuilder builder, PurificationStationRecipe recipe, @NotNull IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 23, 24).addIngredients(recipe.getIngredients().get(0));
         builder.addSlot(RecipeIngredientRole.OUTPUT, 79, 24).addItemStack(recipe.getResultItem(RegistryAccess.EMPTY));
-    }
-
-    @Override
-    public void draw(@NotNull PurificationStationRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        IRecipeCategory.super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY);
-        this.animatedArrow.draw(guiGraphics, 44, 23);
-        bubbles.draw(guiGraphics, 6, 35);
-        pressureIcon.draw(guiGraphics, 104, 0);
-        fuelIcon.draw(guiGraphics, 2, 48);
-        modifierIcon.draw(guiGraphics, 22, 1);
-
-        // FIXME: Should use getPurificationSeconds instead hardcoded int
-        int purificationSeconds = 20;
-        Component timeString = Component.translatable("gui.jei.category.smelting.time.seconds", purificationSeconds);
-        Minecraft minecraft = Minecraft.getInstance();
-        Font fontRenderer = minecraft.font;
-        int stringWidth = fontRenderer.width(timeString);
-        guiGraphics.drawString(fontRenderer, timeString, getWidth() - stringWidth, 49, 0xFF808080, false);
     }
 
     private static class PurificationBubblesTickTimer implements ITickTimer {
