@@ -10,7 +10,7 @@
 		"3": "biosanity:block/purification_station/purification_station_bottom_surface",
 		"6": "biosanity:block/purification_station/tank_texture",
 		"7": "biosanity:block/purification_station/compressor_texture",
-		"particle": "biosanity:block/purification_station/purification_station_bottom_surface"
+		"particle": "biosanity:block/purification_station/purification_station_particle"
 	},
 	"elements": [
 		{
