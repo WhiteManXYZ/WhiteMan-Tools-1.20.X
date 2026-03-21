@@ -1,4 +1,4 @@
-package net.whiteman.biosanity.block.custom.neoplasm;
+package net.whiteman.biosanity.util.block;
 
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -39,7 +39,6 @@ public class NeoplasmRegistry {
             return this != NONE;
         }
     }
-
 
     public static void setup() {
         // Important: Register individual blocks first,

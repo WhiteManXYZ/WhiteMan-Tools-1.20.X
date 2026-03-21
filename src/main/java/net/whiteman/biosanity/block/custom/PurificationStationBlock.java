@@ -27,7 +27,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import net.whiteman.biosanity.block.entity.ModBlockEntities;
-import net.whiteman.biosanity.block.entity.PurificationStationBlockEntity;
+import net.whiteman.biosanity.block.entity.custom.PurificationStationBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,6 @@ public class PurificationStationBlock extends BaseEntityBlock {
         super(pProperties);
         this.registerDefaultState(this.stateDefinition.any().setValue(LIT, Boolean.FALSE));
     }
-
 
     private static VoxelShape makeShape(){
         // Better replace original box shape with custom

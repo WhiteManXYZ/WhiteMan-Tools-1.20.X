@@ -16,7 +16,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.whiteman.biosanity.block.ModBlocks;
-import net.whiteman.biosanity.block.custom.neoplasm.NeoplasmRegistry;
+import net.whiteman.biosanity.util.block.NeoplasmRegistry;
 import net.whiteman.biosanity.block.entity.ModBlockEntities;
 import net.whiteman.biosanity.client.model.OverlayModelLoader;
 import net.whiteman.biosanity.item.ModCreativeModTabs;
@@ -65,9 +65,7 @@ public class BiosanityMod {
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-
-    }
+    public void onServerStarting(ServerStartingEvent event) {}
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

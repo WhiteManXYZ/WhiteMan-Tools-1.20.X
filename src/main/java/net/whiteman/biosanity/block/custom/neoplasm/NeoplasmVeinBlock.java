@@ -13,7 +13,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.whiteman.biosanity.block.ModBlocks;
-import net.whiteman.biosanity.block.entity.NeoplasmRotBlockEntity;
+import net.whiteman.biosanity.block.entity.custom.NeoplasmRotBlockEntity;
+import net.whiteman.biosanity.util.block.NeoplasmRegistry;
 import org.jetbrains.annotations.NotNull;
 
 public class NeoplasmVeinBlock extends NeoplasmBlock {

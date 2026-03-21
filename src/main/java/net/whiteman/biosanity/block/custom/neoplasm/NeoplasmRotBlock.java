@@ -24,7 +24,8 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.whiteman.biosanity.block.ModBlocks;
-import net.whiteman.biosanity.block.entity.NeoplasmRotBlockEntity;
+import net.whiteman.biosanity.block.entity.custom.NeoplasmRotBlockEntity;
+import net.whiteman.biosanity.util.block.NeoplasmRegistry;
 import net.whiteman.biosanity.item.ModItems;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,4 @@
-package net.whiteman.biosanity.block.entity;
+package net.whiteman.biosanity.block.entity.custom;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderGetter;
@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
+import net.whiteman.biosanity.block.entity.ModBlockEntities;
 import net.whiteman.biosanity.client.model.ModelProperties;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +29,6 @@ public class NeoplasmRotBlockEntity extends BlockEntity {
     public NeoplasmRotBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.NEOPLASM_ROT_BE.get(), pos, state);
     }
-
 
     @Override
     public @NotNull ModelData getModelData() {
