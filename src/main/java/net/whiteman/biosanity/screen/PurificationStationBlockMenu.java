@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -24,7 +25,7 @@ public class PurificationStationBlockMenu extends AbstractContainerMenu {
 
     public PurificationStationBlockMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         // TODO(whiteman) fix when spectator try to open menu, it wont open + error in log
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(8));
+        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(9));
     }
 
     public PurificationStationBlockMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
@@ -160,6 +161,10 @@ public class PurificationStationBlockMenu extends AbstractContainerMenu {
 
     public ModifierType getModifierType() {
         return ModifierType.values()[this.data.get(6)];
+    }
+
+    public DyeColor getDye() {
+        return DyeColor.values()[this.data.get(8)];
     }
 
     public int getModifierColor() {

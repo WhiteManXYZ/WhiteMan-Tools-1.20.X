@@ -114,6 +114,7 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
                     case 5 -> PurificationStationBlockEntity.this.getPurificationTime();
                     case 6 -> PurificationStationBlockEntity.this.modifier_type.ordinal();
                     case 7 -> packColor(convertToColors(currentModifierColor));
+                    case 8 -> PurificationStationBlockEntity.this.currentModifierColor.ordinal();
                     default -> 0;
                 };
             }
@@ -128,12 +129,14 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
                     case 4 -> PurificationStationBlockEntity.this.fuel_conversion_progress = value;
                     case 5 -> PurificationStationBlockEntity.this.maxProgress = value;
                     case 6 -> PurificationStationBlockEntity.this.modifier_type = ModifierType.values()[value];
+                    // MAKE ID!!!!!!!!!11111
+                    case 8 -> PurificationStationBlockEntity.this.currentModifierColor = DyeColor.values()[value];
                 }
             }
 
             @Override
             public int getCount() {
-                return 8;
+                return 9;
             }
         };
     }
