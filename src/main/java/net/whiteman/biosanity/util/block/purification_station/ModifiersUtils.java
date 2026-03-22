@@ -4,6 +4,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.whiteman.biosanity.item.ModItems;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -11,9 +12,19 @@ import java.util.Map;
 
 public class ModifiersUtils {
     public enum ModifierType {
-        NONE,
-        SAND_DUST,
-        DYE
+        NONE("modifiertypes.biosanity.purification_station_block.none"),
+        SAND_DUST("modifiertypes.biosanity.purification_station_block.sand_dust"),
+        DYE("modifiertypes.biosanity.purification_station_block.dye");
+
+        private final String name;
+
+        ModifierType(String name) {
+            this.name = name;
+        }
+
+        public @NotNull String getTranslatableName() {
+            return this.name;
+        }
     }
 
     public static int packColor(float[] colors) {
