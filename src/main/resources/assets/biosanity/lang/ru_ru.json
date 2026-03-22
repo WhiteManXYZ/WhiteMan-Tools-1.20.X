@@ -15,9 +15,38 @@
   "jei.block.action.biosanity.painting_translatable": "Покраска",
   "jei.biosanity.purification_station_block.necessary_pressure_label": "Необходимое давление:",
   "jei.biosanity.purification_station_block.necessary_pressure_value": "%s PSI",
+  "jei.biosanity.purification_station_block.necessary_modifier_label": "Необходимый модификатор:",
+  "jei.biosanity.purification_station_block.necessary_modifier_value": "%s",
+  "jei.biosanity.purification_station_block.necessary_dye_label": "Необходимый краситель:",
+  "jei.biosanity.purification_station_block.necessary_dye_value": "%s",
+
 
   "tooltip.biosanity.purification_station_block.pressure_label": "Текущее давление:",
   "tooltip.biosanity.purification_station_block.pressure_value": "%s / %s PSI",
+  "tooltip.biosanity.purification_station_block.modifier_label": "Текущий модификатор:",
+  "tooltip.biosanity.purification_station_block.modifier_value": "%s",
+  "tooltip.biosanity.purification_station_block.dye_modifier_label": "Текущий краситель:",
+  "tooltip.biosanity.purification_station_block.dye_value": "%s",
+
+  "modifiertypes.biosanity.purification_station_block.none": "Ничего",
+  "modifiertypes.biosanity.purification_station_block.sand_dust": "Песок",
+  "modifiertypes.biosanity.purification_station_block.dye": "Краситель",
+  "modifiertypes.dye.white": "Белый",
+  "modifiertypes.dye.orange": "Оранжевый",
+  "modifiertypes.dye.magenta": "Пурпурный",
+  "modifiertypes.dye.light_blue": "Голубой",
+  "modifiertypes.dye.yellow": "Жёлтый",
+  "modifiertypes.dye.lime": "Лаймовый",
+  "modifiertypes.dye.pink": "Розовый",
+  "modifiertypes.dye.gray": "Серый",
+  "modifiertypes.dye.light_gray": "Светло-серый",
+  "modifiertypes.dye.cyan": "Бирюзовый",
+  "modifiertypes.dye.purple": "Фиолетовый",
+  "modifiertypes.dye.blue": "Синий",
+  "modifiertypes.dye.brown": "Коричневый",
+  "modifiertypes.dye.green": "Зелёный",
+  "modifiertypes.dye.red": "Красный",
+  "modifiertypes.dye.black": "Чёрный",
 
   "creativetab.biosanity_tab": "Biosanity"
 }
