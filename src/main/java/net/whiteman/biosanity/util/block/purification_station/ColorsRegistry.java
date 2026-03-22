@@ -1,5 +1,7 @@
 package net.whiteman.biosanity.util.block.purification_station;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -8,10 +10,48 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class ColorsRegistry {
+    public static final Map<DyeColor, TextColor> DYE_TO_COLOR = new EnumMap<>(DyeColor.class);
+
+    private static void register(DyeColor dye, ChatFormatting format) {
+        Integer colorValue = format.getColor();
+
+        if (colorValue == null) {
+            throw new IllegalArgumentException("Error in ColorsRegistry: Formatting " + format.name() +
+                    " has no color! Don't use styles such of (BOLD/ITALIC) instead colors.");
+        }
+
+        DYE_TO_COLOR.put(dye, TextColor.fromRgb(colorValue));
+    }
+
+    private static void register(DyeColor dye, int hexColor) {
+        DYE_TO_COLOR.put(dye, TextColor.fromRgb(hexColor));
+    }
+
+    static {
+        register(DyeColor.WHITE, ChatFormatting.WHITE);
+        register(DyeColor.ORANGE, ChatFormatting.GOLD);
+        register(DyeColor.MAGENTA, 0xC74EBD);
+        register(DyeColor.LIGHT_BLUE, ChatFormatting.BLUE);
+        register(DyeColor.YELLOW, ChatFormatting.YELLOW);
+        register(DyeColor.LIME, ChatFormatting.GREEN);
+        register(DyeColor.PINK, ChatFormatting.LIGHT_PURPLE);
+        register(DyeColor.GRAY, ChatFormatting.DARK_GRAY);
+        register(DyeColor.LIGHT_GRAY, ChatFormatting.GRAY);
+        register(DyeColor.CYAN, ChatFormatting.DARK_AQUA);
+        register(DyeColor.PURPLE, ChatFormatting.DARK_PURPLE);
+        register(DyeColor.BLUE, ChatFormatting.DARK_BLUE);
+        register(DyeColor.BROWN, 0x835432);
+        register(DyeColor.GREEN, ChatFormatting.DARK_GREEN);
+        register(DyeColor.RED, ChatFormatting.RED);
+        register(DyeColor.BLACK, 0x373737);
+    }
+
     public static final List<Item> WOOLS = getAllColorsFor("_wool");
     public static final List<Item> WOOL_CARPETS = getAllColorsFor("_carpet");
     public static final List<Item> CONCRETE = getAllColorsFor("_concrete");
