@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class OverlayBakedModel implements BakedModel {
@@ -30,12 +31,13 @@ public class OverlayBakedModel implements BakedModel {
     @Override
     public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType) {
         BlockState originalState = data.get(ModelProperties.ORIGINAL_STATE);
-        Integer stage = data.get(ModelProperties.OVERLAY_STAGE);
 
         // Fallback, if the block is not infected or the data is corrupted
         if (originalState == null || originalState.isAir()) {
             return fallbackModel.getQuads(state, side, rand, data, renderType);
         }
+
+        if (side == null) return Collections.emptyList();
 
         BlockModelShaper blockModelShaper = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper();
         BakedModel originalModel = blockModelShaper.getBlockModel(originalState);
@@ -48,14 +50,22 @@ public class OverlayBakedModel implements BakedModel {
         }
 
         // Adding overlay quads (details)
-        if (stage != null && stage >= 0 && stage < overlaySprites.size() &&
-                (renderType == null || renderType == RenderType.translucent())) {
+        if (renderType == null || renderType == RenderType.translucent()) {
+            Integer stage = data.get(ModelProperties.OVERLAY_STAGE);
 
-            TextureAtlasSprite overlaySprite = overlaySprites.get(stage);
-            List<BakedQuad> baseQuads = originalModel.getQuads(originalState, side, rand, data, null);
+            if (stage != null && stage >= 0 && stage < overlaySprites.size()) {
+                TextureAtlasSprite overlaySprite = overlaySprites.get(stage);
 
-            for (BakedQuad quad : baseQuads) {
-                resultQuads.add(createOverlayQuad(quad, overlaySprite));
+                // We request quads from the original model
+                RenderType primaryType = originalModel.getRenderTypes(originalState, rand, data).isEmpty()
+                        ? RenderType.solid()
+                        : originalModel.getRenderTypes(originalState, rand, data).iterator().next();
+
+                List<BakedQuad> baseQuads = originalModel.getQuads(originalState, side, rand, data, primaryType);
+
+                for (BakedQuad quad : baseQuads) {
+                    resultQuads.add(createOverlayQuad(quad, overlaySprite));
+                }
             }
         }
 
@@ -64,7 +74,7 @@ public class OverlayBakedModel implements BakedModel {
 
     private BakedQuad createOverlayQuad(BakedQuad baseQuad, TextureAtlasSprite newSprite) {
         int[] vertexData = baseQuad.getVertices().clone();
-        int step = vertexData.length / 4;
+        int step = 8;
         TextureAtlasSprite baseSprite = baseQuad.getSprite();
 
         for (int i = 0; i < 4; i++) {
@@ -75,12 +85,6 @@ public class OverlayBakedModel implements BakedModel {
             float y = Float.intBitsToFloat(vertexData[offset + 1]);
             float z = Float.intBitsToFloat(vertexData[offset + 2]);
 
-            // Z-fighting protection
-            Direction dir = baseQuad.getDirection();
-            vertexData[offset] = Float.floatToRawIntBits(x + dir.getStepX() * 0.0005f);
-            vertexData[offset + 1] = Float.floatToRawIntBits(y + dir.getStepY() * 0.0005f);
-            vertexData[offset + 2] = Float.floatToRawIntBits(z + dir.getStepZ() * 0.0005f);
-
             // UV-coords
             float u = Float.intBitsToFloat(vertexData[offset + 4]);
             float v = Float.intBitsToFloat(vertexData[offset + 5]);
@@ -89,9 +93,16 @@ public class OverlayBakedModel implements BakedModel {
             float relU = (u - baseSprite.getU0()) / (baseSprite.getU1() - baseSprite.getU0());
             float relV = (v - baseSprite.getV0()) / (baseSprite.getV1() - baseSprite.getV0());
 
-            // Scale it to 0..16 and take the UV overlay
-            vertexData[offset + 4] = Float.floatToRawIntBits(newSprite.getU(Math.max(0, Math.min(1, relU)) * 16.0f));
-            vertexData[offset + 5] = Float.floatToRawIntBits(newSprite.getV(Math.max(0, Math.min(1, relV)) * 16.0f));
+            // Restrict to go beyond the edges
+            relU = Math.max(0, Math.min(1, relU));
+            relV = Math.max(0, Math.min(1, relV));
+
+            // New UV
+            vertexData[offset + 4] = Float.floatToRawIntBits(newSprite.getU(relU * 16.0f));
+            vertexData[offset + 5] = Float.floatToRawIntBits(newSprite.getV(relV * 16.0f));
+
+            // Reset the color (offset + 3) to prevent the overlay from inheriting random colors (like grass)
+            vertexData[offset + 3] = -1;
         }
 
         return new BakedQuad(vertexData, baseQuad.getTintIndex(), baseQuad.getDirection(), newSprite, baseQuad.isShade());
@@ -131,6 +142,14 @@ public class OverlayBakedModel implements BakedModel {
 
     @Override
     public @NotNull ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
-        return ChunkRenderTypeSet.of(RenderType.solid(), RenderType.translucent());
+        BlockState originalState = data.get(ModelProperties.ORIGINAL_STATE);
+
+        // Fallback
+        if (originalState == null) {
+            return fallbackModel.getRenderTypes(state, rand, data);
+        }
+
+        ChunkRenderTypeSet originTypes = fallbackModel.getRenderTypes(originalState, rand, data);
+        return ChunkRenderTypeSet.union(originTypes, ChunkRenderTypeSet.of(RenderType.translucent()));
     }
 }
