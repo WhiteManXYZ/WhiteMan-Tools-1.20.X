@@ -16,14 +16,15 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.whiteman.biosanity.block.ModBlocks;
-import net.whiteman.biosanity.util.block.NeoplasmRegistry;
 import net.whiteman.biosanity.block.entity.ModBlockEntities;
 import net.whiteman.biosanity.client.model.OverlayModelLoader;
+import net.whiteman.biosanity.client.sound.ModSounds;
 import net.whiteman.biosanity.item.ModCreativeModTabs;
 import net.whiteman.biosanity.item.ModItems;
 import net.whiteman.biosanity.recipe.ModRecipes;
 import net.whiteman.biosanity.screen.ModMenuTypes;
 import net.whiteman.biosanity.screen.PurificationStationBlockScreen;
+import net.whiteman.biosanity.util.block.NeoplasmRegistry;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(BiosanityMod.MOD_ID)
@@ -40,6 +41,7 @@ public class BiosanityMod {
 
         ModItems.ITEMS.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
+        ModSounds.SOUND_EVENTS.register(modEventBus);
 
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
