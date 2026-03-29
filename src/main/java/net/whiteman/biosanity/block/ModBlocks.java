@@ -44,13 +44,12 @@ public class ModBlocks {
     public static final RegistryObject<Block> NEOPLASM_ROT_BLOCK = registerBlock("neoplasm_rot_block",
             () -> new NeoplasmRotBlock(BlockBehaviour.Properties.of()
                     .strength(1.5f, 2f)
-                    .ignitedByLava()
                     .randomTicks()
             ));
 
     public static final RegistryObject<Block> NEOPLASM_VEIN_BLOCK = registerBlock("neoplasm_vein_block",
             () -> new NeoplasmVeinBlock(BlockBehaviour.Properties.of()
-                    .strength(2.5f, 6f)
+                    .strength(4.5f, 6f)
                     .randomTicks()
             ));
 

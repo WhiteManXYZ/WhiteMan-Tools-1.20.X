@@ -49,7 +49,6 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
     }
 
     /// WIP
-    /// Fix removing the end leads to stupor?
     /// Maybe make smart resource searching?
     private void performGrowth(ServerLevel level, BlockPos pos, BlockState state, RandomSource random) {
         // There a chance to just grow up and end vein chain
@@ -218,6 +217,18 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
         return null;
     }
 
+    private static boolean hasNonMatureNearby(Level level, BlockPos pos) {
+        for (Direction d : Direction.values()) {
+            BlockPos checkPos = pos.relative(d);
+            BlockState state = level.getBlockState(checkPos);
+
+            if (state.hasProperty(MATURE) && !state.getValue(MATURE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void tick(BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
         // Only a "young" vein (which is not yet mature) can grow
@@ -234,6 +245,30 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
             // if block schedule chain is broken, trying to launch it again
             performGrowth(level, pos, state, random);
         }
+    }
+
+    @Override
+    public void onRemove(BlockState state, @NotNull Level level, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.is(newState.getBlock())) {
+            super.onRemove(state, level, pos, newState, isMoving);
+            return;
+        }
+        // If the living end of our vein is destroyed, we make the previous block young again
+        // (and all neighbors too)
+        for (Direction dir : Direction.values()) {
+            BlockPos neighborPos = pos.relative(dir);
+            BlockState neighborState = level.getBlockState(neighborPos);
+
+            if ((state.hasProperty(MATURE) && !state.getValue(MATURE)) || hasNonMatureNearby(level, pos)) {
+                if (neighborState.hasProperty(MATURE) && neighborState.getValue(MATURE)) {
+                    level.setBlock(neighborPos, neighborState.setValue(MATURE, false), 3);
+
+                    // Test particle
+                    level.levelEvent(2001, neighborPos, Block.getId(neighborState));
+                }
+            }
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     @Override
