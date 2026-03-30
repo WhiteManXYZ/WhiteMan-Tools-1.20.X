@@ -10,13 +10,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.whiteman.biosanity.block.entity.ModBlockEntities;
 import org.jetbrains.annotations.NotNull;
 
-import static net.whiteman.biosanity.util.block.NeoplasmRegistry.*;
+import static net.whiteman.biosanity.util.block.NeoplasmUtils.CoreRegistry.*;
+import static net.whiteman.biosanity.util.block.NeoplasmUtils.ResourceRegistry.ResourceType;
 
 public class NeoplasmCoreBlockEntity extends BlockEntity {
     public static final int CALM_DOWN_RATE = 5;
-    public static final int RESOURCE_LEVEL_MULTIPLIER = 10;
-
-    private static final int[] XP_TABLE = {3, 10, 30, 90, 270, 810, 2430};
 
     public NeoplasmCoreBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.NEOPLASM_CORE_BE.get(), pPos, pBlockState);
@@ -53,7 +51,7 @@ public class NeoplasmCoreBlockEntity extends BlockEntity {
         this.alertLevel = CoreAlertLevel.fromPoints(this.alertPoints);
     }
 
-    public void decomposeResource(int level, ResourceType type) {
+    public void decomposeResource(ResourceType type, int level) {
         switch (type) {
             case BIOMASS -> {
                 // Some code
@@ -77,7 +75,7 @@ public class NeoplasmCoreBlockEntity extends BlockEntity {
     }
 
     private int calculateXp(int level) {
-        return (int) (RESOURCE_LEVEL_MULTIPLIER * Math.pow(3, level - 1));
+        return getXPFromLevel(level);
     }
 
     @Override

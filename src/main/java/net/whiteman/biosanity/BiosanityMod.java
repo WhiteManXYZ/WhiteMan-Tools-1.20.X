@@ -24,7 +24,7 @@ import net.whiteman.biosanity.item.ModItems;
 import net.whiteman.biosanity.recipe.ModRecipes;
 import net.whiteman.biosanity.screen.ModMenuTypes;
 import net.whiteman.biosanity.screen.PurificationStationBlockScreen;
-import net.whiteman.biosanity.util.block.NeoplasmRegistry;
+import net.whiteman.biosanity.util.block.NeoplasmUtils;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(BiosanityMod.MOD_ID)
@@ -55,7 +55,7 @@ public class BiosanityMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(NeoplasmRegistry::setup);
+        event.enqueueWork(NeoplasmUtils.ResourceRegistry::setup);
     }
 
     // Add the example block item to the building blocks tab
