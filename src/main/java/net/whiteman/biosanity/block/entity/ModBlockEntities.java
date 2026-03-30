@@ -9,6 +9,7 @@ import net.whiteman.biosanity.BiosanityMod;
 import net.whiteman.biosanity.block.ModBlocks;
 import net.whiteman.biosanity.block.entity.custom.NeoplasmCoreBlockEntity;
 import net.whiteman.biosanity.block.entity.custom.NeoplasmRotBlockEntity;
+import net.whiteman.biosanity.block.entity.custom.NeoplasmVeinBlockEntity;
 import net.whiteman.biosanity.block.entity.custom.PurificationStationBlockEntity;
 
 public class ModBlockEntities {
@@ -33,6 +34,11 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(NeoplasmCoreBlockEntity::new,
                             ModBlocks.NEOPLASM_CORE_BLOCK.get()).build(null));
 
+    @SuppressWarnings("ConstantConditions")
+    public static final RegistryObject<BlockEntityType<NeoplasmVeinBlockEntity>> NEOPLASM_VEIN_BE =
+            BLOCK_ENTITIES.register("neoplasm_vein_be", () ->
+                    BlockEntityType.Builder.of(NeoplasmVeinBlockEntity::new,
+                            ModBlocks.NEOPLASM_VEIN_BLOCK.get()).build(null));
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
