@@ -31,9 +31,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static net.whiteman.biosanity.util.block.NeoplasmRegistry.MAX_RESOURCE_LEVEL;
+
 public class NeoplasmRotBlock extends NeoplasmBlock implements EntityBlock {
     public static final EnumProperty<NeoplasmRegistry.ResourceType> RESOURCE_TYPE = EnumProperty.create("type", NeoplasmRegistry.ResourceType.class);
-    public static final int MAX_RESOURCE_LEVEL = 7;
     public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, MAX_RESOURCE_LEVEL);
 
     private static final int MIN_INFECTION_SPEED = 150;
