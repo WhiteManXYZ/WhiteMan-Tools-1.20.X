@@ -13,7 +13,7 @@ import net.whiteman.biosanity.block.entity.custom.NeoplasmCoreBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NeoplasmCoreBlock extends BaseEntityBlock {
+public class NeoplasmCoreBlock extends BaseEntityBlock implements INeoplasmNode {
     public NeoplasmCoreBlock(Properties pProperties) { super(pProperties); }
 
     @Override
@@ -24,6 +24,11 @@ public class NeoplasmCoreBlock extends BaseEntityBlock {
     @Override
     public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    public boolean isCore() {
+        return true;
     }
 
     @Override

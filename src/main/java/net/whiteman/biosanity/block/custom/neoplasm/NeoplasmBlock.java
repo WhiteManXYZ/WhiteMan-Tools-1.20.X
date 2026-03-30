@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 
-public class NeoplasmBlock extends Block {
+public class NeoplasmBlock extends Block implements INeoplasmNode {
     public static BlockBehaviour.Properties getDefaultProperties() {
         return BlockBehaviour.Properties.of()
                 .friction(0.8F)
