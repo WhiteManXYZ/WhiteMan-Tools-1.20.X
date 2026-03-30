@@ -13,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,8 +24,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.whiteman.biosanity.block.ModBlocks;
 import net.whiteman.biosanity.block.entity.custom.NeoplasmRotBlockEntity;
-import net.whiteman.biosanity.util.block.NeoplasmRegistry;
 import net.whiteman.biosanity.item.ModItems;
+import net.whiteman.biosanity.util.block.NeoplasmRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -93,11 +92,6 @@ public class NeoplasmRotBlock extends NeoplasmBlock implements EntityBlock {
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new NeoplasmRotBlockEntity(pos, state);
-    }
-
-    @Override
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
-        return RenderShape.MODEL;
     }
 
     @Override
