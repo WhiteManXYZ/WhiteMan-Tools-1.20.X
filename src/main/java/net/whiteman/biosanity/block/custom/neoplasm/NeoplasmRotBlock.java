@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class NeoplasmRotBlock extends NeoplasmBlock implements EntityBlock {
-    public static final EnumProperty<NeoplasmRegistry.Type> TYPE = EnumProperty.create("type", NeoplasmRegistry.Type.class);
+    public static final EnumProperty<NeoplasmRegistry.ResourceType> RESOURCE_TYPE = EnumProperty.create("type", NeoplasmRegistry.ResourceType.class);
     public static final int MAX_RESOURCE_LEVEL = 7;
     public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, MAX_RESOURCE_LEVEL);
 
@@ -48,7 +48,7 @@ public class NeoplasmRotBlock extends NeoplasmBlock implements EntityBlock {
     public NeoplasmRotBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
-                .setValue(TYPE, NeoplasmRegistry.Type.NONE)
+                .setValue(RESOURCE_TYPE, NeoplasmRegistry.ResourceType.NONE)
                 .setValue(LEVEL, 0)
         );
     }
@@ -76,10 +76,10 @@ public class NeoplasmRotBlock extends NeoplasmBlock implements EntityBlock {
         BlockPos targetPos = pos.relative(randomDir);
         BlockState targetState = level.getBlockState(targetPos);
 
-        NeoplasmRegistry.ResourceEntry info = NeoplasmRegistry.getResourceInfo(targetState.getBlock());
-        if (info.type().isResource()) {
+        NeoplasmRegistry.ResourceTypeEntry info = NeoplasmRegistry.getResourceInfo(targetState.getBlock());
+        if (info.resourceType().isResource()) {
             level.setBlock(targetPos, ModBlocks.NEOPLASM_ROT_BLOCK.get().defaultBlockState()
-                    .setValue(NeoplasmRotBlock.TYPE, info.type())
+                    .setValue(NeoplasmRotBlock.RESOURCE_TYPE, info.resourceType())
                     .setValue(NeoplasmRotBlock.LEVEL, info.level()), 3);
 
             if (level.getBlockEntity(targetPos) instanceof NeoplasmRotBlockEntity be) {
@@ -116,7 +116,7 @@ public class NeoplasmRotBlock extends NeoplasmBlock implements EntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(TYPE, LEVEL);
+        builder.add(RESOURCE_TYPE, LEVEL);
     }
 
     @Override

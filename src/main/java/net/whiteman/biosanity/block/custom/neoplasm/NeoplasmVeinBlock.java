@@ -103,9 +103,9 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
     // Absorb
     // Creates a "patient-zero" absorbed resource
     // that continue spread rot blocks by himself
-    private void absorbResources(ServerLevel level, BlockPos targetPos, NeoplasmRegistry.ResourceEntry info, BlockState targetState) {
+    private void absorbResources(ServerLevel level, BlockPos targetPos, NeoplasmRegistry.ResourceTypeEntry info, BlockState targetState) {
         level.setBlock(targetPos, ModBlocks.NEOPLASM_ROT_BLOCK.get().defaultBlockState()
-                .setValue(NeoplasmRotBlock.TYPE, info.type())
+                .setValue(NeoplasmRotBlock.RESOURCE_TYPE, info.resourceType())
                 .setValue(NeoplasmRotBlock.LEVEL, info.level()), 3);
 
         if (level.getBlockEntity(targetPos) instanceof NeoplasmRotBlockEntity devourBE) {
@@ -202,15 +202,15 @@ public class NeoplasmVeinBlock extends NeoplasmBlock {
         return false;
     }
 
-    private record ResourceResult(Direction direction, NeoplasmRegistry.ResourceEntry info, BlockState state) {}
+    private record ResourceResult(Direction direction, NeoplasmRegistry.ResourceTypeEntry info, BlockState state) {}
 
     private static ResourceResult findResourceNearby(Level level, BlockPos pos) {
         for (Direction d : Direction.values()) {
             BlockPos checkPos = pos.relative(d);
             BlockState state = level.getBlockState(checkPos);
-            NeoplasmRegistry.ResourceEntry info = NeoplasmRegistry.getResourceInfo(state.getBlock());
+            NeoplasmRegistry.ResourceTypeEntry info = NeoplasmRegistry.getResourceInfo(state.getBlock());
 
-            if (info.type().isResource()) {
+            if (info.resourceType().isResource()) {
                 return new ResourceResult(d, info, state);
             }
         }
