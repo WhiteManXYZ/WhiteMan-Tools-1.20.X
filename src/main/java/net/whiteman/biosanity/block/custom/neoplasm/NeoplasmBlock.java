@@ -6,17 +6,28 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 
 public class NeoplasmBlock extends Block {
-    public NeoplasmBlock(Properties pProperties) { super(pProperties
-            .friction(0.8F)
-            .ignitedByLava()
-            .sound(SoundType.SLIME_BLOCK)
-            .mapColor(MapColor.TERRACOTTA_RED));
+    public static BlockBehaviour.Properties getDefaultProperties() {
+        return BlockBehaviour.Properties.of()
+                .friction(0.8F)
+                .strength(1.0F, 3.0F)
+                .ignitedByLava()
+                .sound(SoundType.SLIME_BLOCK)
+                .mapColor(MapColor.TERRACOTTA_RED);
+    }
+
+    public NeoplasmBlock(Properties pProperties) { super(pProperties); }
+
+    @Override
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
