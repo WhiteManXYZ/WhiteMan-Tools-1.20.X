@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractCategory<T extends AbstractJettingRecipe> implements IRecipeCategory<T> {
+public abstract class AbstractJettingCategory<T extends AbstractJettingRecipe> implements IRecipeCategory<T> {
     public static final ResourceLocation PURIFICATION_STATION_TEXTURE = new ResourceLocation(BiosanityMod.MOD_ID,
             "textures/gui/purification_station_block_gui.png");
     private static final String NECESSARY_MODIFIER_LABEL_TRANSLATABLE = "jei.biosanity.purification_station_block.necessary_modifier_label";
@@ -52,7 +52,7 @@ public abstract class AbstractCategory<T extends AbstractJettingRecipe> implemen
     protected final IDrawableAnimated bubbles;
     private final LoadingCache<Integer, IDrawableAnimated> cachedArrows;
 
-    public AbstractCategory(IGuiHelper helper, int pressureIconU, int pressureIconV) {
+    public AbstractJettingCategory(IGuiHelper helper, int pressureIconU, int pressureIconV) {
         this.background = helper.createDrawable(PURIFICATION_STATION_TEXTURE, 48, 16, 121, 58);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.PURIFICATION_STATION_BLOCK.get()));
         this.pressureIcon = helper.createDrawable(PURIFICATION_STATION_TEXTURE, pressureIconU, pressureIconV, 17, 17);

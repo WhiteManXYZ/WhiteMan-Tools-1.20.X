@@ -13,7 +13,7 @@ import net.whiteman.biosanity.world.item.crafting.PaintingRecipe;
 import net.whiteman.biosanity.world.util.ModifierUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class PaintingCategory extends AbstractCategory<PaintingRecipe> {
+public class PaintingCategory extends AbstractJettingCategory<PaintingRecipe> {
     public static final ResourceLocation UID = new ResourceLocation(BiosanityMod.MOD_ID, "painting");
 
     public static final RecipeType<PaintingRecipe> PAINTING_TYPE =

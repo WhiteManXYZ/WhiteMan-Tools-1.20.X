@@ -12,7 +12,7 @@ import net.whiteman.biosanity.BiosanityMod;
 import net.whiteman.biosanity.world.item.crafting.PurificationRecipe;
 import org.jetbrains.annotations.NotNull;
 
-public class PurificationCategory extends AbstractCategory<PurificationRecipe> {
+public class PurificationCategory extends AbstractJettingCategory<PurificationRecipe> {
     public static final ResourceLocation UID = new ResourceLocation(BiosanityMod.MOD_ID, "purification");
 
     public static final RecipeType<PurificationRecipe> PURIFICATION_TYPE =
