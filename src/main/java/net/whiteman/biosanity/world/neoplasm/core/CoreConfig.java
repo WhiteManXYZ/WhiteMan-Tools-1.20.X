@@ -11,7 +11,7 @@ public class CoreConfig {
     public static final int STARTING_BIOMASS_VALUE = 30;
     public static final int STARTING_MINERALS_VALUE = 10;
     public static final int STARTING_ENERGY_VALUE = 10;
-    public static final int START_MAX_STORAGE = 250;
+    public static final int START_MAX_STORAGE = 150;
 
     public static final int CORE_EXPAND_STORAGE_VALUE = 100;
 
