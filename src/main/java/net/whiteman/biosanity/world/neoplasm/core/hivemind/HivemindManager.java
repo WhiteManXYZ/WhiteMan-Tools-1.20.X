@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static net.whiteman.biosanity.world.neoplasm.core.CoreConfig.HIVEMIND_MAX_CORES;
+import static net.whiteman.biosanity.world.neoplasm.NeoplasmConfig.HIVEMIND_MAX_CORES;
 
 @Mod.EventBusSubscriber(modid = BiosanityMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class HivemindManager extends SavedData {
@@ -112,6 +112,23 @@ public class HivemindManager extends SavedData {
 
         // The joining itself
         // (doesn't matter, to created or already existing hivemind)
+        Hivemind hive = hiveminds.get(targetId);
+        if (hive != null) {
+            hive.addMember(pos);
+            registerBlock(pos, targetId);
+            this.setDirty();
+        }
+
+        return targetId;
+    }
+
+    public @NotNull UUID createHivemind(BlockPos pos) {
+        UUID targetId;
+
+        targetId = UUID.randomUUID();
+        hiveminds.put(targetId, new Hivemind(targetId));
+
+        // Joining
         Hivemind hive = hiveminds.get(targetId);
         if (hive != null) {
             hive.addMember(pos);
