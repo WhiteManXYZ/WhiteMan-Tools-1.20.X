@@ -19,15 +19,13 @@ public enum HivemindLevel implements StringRepresentable {
 
     public static final HivemindLevel[] CORE_LEVELS = HivemindLevel.values();
 
-
     HivemindLevel(String name, int xp, int maxStamina) {
         this.name = name;
         this.xp = xp;
         this.maxStamina = maxStamina;
     }
 
-    @Override
-    public @NotNull String getSerializedName() {
+    @Override public @NotNull String getSerializedName() {
         return this.name;
     }
 
@@ -44,5 +42,9 @@ public enum HivemindLevel implements StringRepresentable {
             }
         }
         return HivemindLevel.T1;
+    }
+
+    public static boolean isHigherOrEqualLevel(HivemindLevel level, HivemindLevel level2) {
+        return level.ordinal() >= level2.ordinal();
     }
 }
