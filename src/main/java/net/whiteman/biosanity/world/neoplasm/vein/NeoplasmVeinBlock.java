@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.whiteman.biosanity.world.level.block.ModBlocks;
 import net.whiteman.biosanity.world.neoplasm.common.node.INeoplasmNode;
 import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
+import net.whiteman.biosanity.world.neoplasm.core.hivemind.HivemindLevel;
 import net.whiteman.biosanity.world.neoplasm.resource.ResourceRegistry;
 import net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBlockEntity;
 import net.whiteman.biosanity.message.ModMessages;
@@ -83,7 +84,8 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
 
         // We're trying to decrease chance of veins contact
         // or increase spread chance, if there is unreplaceable block
-        if (hasNeoplasmNearby(level, pos.relative(growDir), pos) || !ResourceRegistry.isReplaceable(level.getBlockState(pos.relative(growDir)))) {
+        // TODO make hivemind dependency
+        if (hasNeoplasmNearby(level, pos.relative(growDir), pos) || !ResourceRegistry.isReplaceable(level.getBlockState(pos.relative(growDir)), HivemindLevel.T1)) {
             for (int i = 0; i < REROLL_ATTEMPTS; i++) {
                 net.minecraft.core.Direction newDir = net.minecraft.core.Direction.getRandom(random);
 
@@ -110,7 +112,8 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
         }
         else {
             BlockState targetState = level.getBlockState(pos.relative(growDir));
-            if (ResourceRegistry.isReplaceable(targetState)) {
+            // TODO make hivemind dependency
+            if (ResourceRegistry.isReplaceable(targetState, HivemindLevel.T1)) {
                 grow(level, pos, state, random, growDir, originalDir);
             }
         }

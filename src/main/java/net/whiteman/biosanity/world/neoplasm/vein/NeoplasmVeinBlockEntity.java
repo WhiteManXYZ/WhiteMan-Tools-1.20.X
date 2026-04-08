@@ -92,8 +92,10 @@ public class NeoplasmVeinBlockEntity extends BlockEntity {
 
             if (targetCoreEntity instanceof NeoplasmCoreBlockEntity core) {
                 // Target core
-                core.decomposeResource(this.heldResourceType, this.heldResourceLevel);
+                boolean isDecomposed = core.decomposeResource(this.heldResourceType, this.heldResourceLevel);
                 // Current vein
+                if (!isDecomposed) return;
+
                 level.setBlock(pos, state.setValue(HAS_NUTRIENT, false), Block.UPDATE_ALL);
                 this.clearResource();
 
