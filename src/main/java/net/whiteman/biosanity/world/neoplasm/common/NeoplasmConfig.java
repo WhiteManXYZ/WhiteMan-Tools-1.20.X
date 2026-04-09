@@ -1,4 +1,4 @@
-package net.whiteman.biosanity.world.neoplasm;
+package net.whiteman.biosanity.world.neoplasm.common;
 
 import net.whiteman.biosanity.world.neoplasm.core.hivemind.HivemindLevel;
 
@@ -43,6 +43,13 @@ public class NeoplasmConfig {
 
     public static final int CORE_GOAL_CONDITION_THRESHOLD = 10;
     public static final int CORE_GOAL_CONDITION_OFFSET = CORE_GOAL_CONDITION_THRESHOLD / 2;
+
+    //endregion
+
+    //region Vein
+
+    public static final int TICKS_TO_TRANSFER_NUTRIENT = 5;
+    public static final int TICKS_TO_SEND_IMPULSE = 3;
 
     //endregion
 
