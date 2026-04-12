@@ -48,6 +48,13 @@ public class NeoplasmConfig {
 
     //region Vein
 
+    // Base params
+    public static final double FALL_CHANCE = 0.75;
+    public static final double ORIGINAL_DIRECTION_CHANCE = 0.45;
+    public static final int REROLL_ATTEMPTS = 8;
+    public static final int NEIGHBOR_LIMIT = 2;
+
+    // Transmissing params
     public static final int TICKS_TO_TRANSFER_NUTRIENT = 5;
     public static final int TICKS_TO_SEND_IMPULSE = 3;
 
