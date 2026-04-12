@@ -1,10 +1,11 @@
 package net.whiteman.biosanity.world.neoplasm.vein;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.TickTask;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -14,41 +15,30 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.whiteman.biosanity.world.level.block.ModBlocks;
-import net.whiteman.biosanity.world.neoplasm.common.node.INeoplasmNode;
-import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
-import net.whiteman.biosanity.world.neoplasm.core.hivemind.HivemindLevel;
-import net.whiteman.biosanity.world.neoplasm.resource.ResourceRegistry;
-import net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBlockEntity;
 import net.whiteman.biosanity.message.ModMessages;
 import net.whiteman.biosanity.message.synchronization.SyncNeoplasmRotPacket;
+import net.whiteman.biosanity.world.level.block.ModBlocks;
+import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
+import net.whiteman.biosanity.world.neoplasm.common.INeoplasmNode;
+import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.core.hivemind.HivemindLevel;
 import net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBlock;
+import net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConstants.DIRECTIONS;
-import static net.whiteman.biosanity.world.neoplasm.resource.ResourceRegistry.ResourceTypeEntry;
+import java.util.*;
+
+import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConfig.*;
+import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConstants.*;
+import static net.whiteman.biosanity.world.neoplasm.resource.ResourceRegistry.*;
+import static net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBlock.RESOURCE_LEVEL;
+import static net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBlock.RESOURCE_TYPE;
 
 public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode {
-    // States
     public static final BooleanProperty MATURE = BooleanProperty.create("mature");
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
-    public static final DirectionProperty PARENT_DIRECTION = DirectionProperty.create("parent_direction", DIRECTIONS);
     public static final BooleanProperty HAS_NUTRIENT = BooleanProperty.create("has_nutrient");
-    // Base params
-    private static final double BRANCHING_CHANCE = 0.02;
-    private static final double FALL_CHANCE = 0.75;
-    private static final double ORIGINAL_DIRECTION_CHANCE = 0.45;
-    private static final int REROLL_ATTEMPTS = 10;
-    private static final double MATURE_CHANCE = 0.004;
-    // Tick rate params
-    private static final int MIN_TICKS_TO_SPREAD = 140;
-    private static final int MAX_TICKS_TO_SPREAD = 400;
-    private static final double RAIN_WEATHER_SPREAD_MODIFIER = 0.9;
-    private static final double NIGHT_SPREAD_MODIFIER = 0.8;
 
     public NeoplasmVeinBlock(Properties properties) {
         super(properties);
@@ -57,153 +47,153 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
                 .setValue(HAS_NUTRIENT, false));
     }
 
-    private void scheduleNextTick(Level level, BlockPos pos) {
-        if (!level.isClientSide) {
-            double delay = level.random.nextInt(MIN_TICKS_TO_SPREAD, MAX_TICKS_TO_SPREAD);
-            // We apply spread speed modifiers for variable gameplay
-            // and don't allow delay to be lower than 20 ticks
-            level.scheduleTick(pos, this, Math.max(spreadSpeedModifiers(level, delay), 20));
+    public boolean canSpread(Level level, BlockPos pos, HivemindLevel veinLevel) {
+        for (Direction dir : DIRECTIONS) {
+            if (isReplaceable(level.getBlockState(pos.relative(dir)), veinLevel)) return true;
         }
+
+        if (findResourceNearby(level, pos) != null) return true;
+
+        return false;
     }
 
-    /// WIP
-    /// Maybe make smart resource searching?
-    /// Don't allow to grow forward while falling down
-    private void performGrowth(ServerLevel level, BlockPos pos, BlockState state, RandomSource random) {
-        // There a chance to just grow up and end vein chain
-        if (random.nextDouble() < MATURE_CHANCE) {
-            level.setBlock(pos, state.setValue(MATURE, true), Block.UPDATE_ALL);
-            return;
-        }
-        // Original dir contains original "root vein" direction
-        net.minecraft.core.Direction originalDir = state.getValue(FACING);
-        net.minecraft.core.Direction growDir = (random.nextDouble() < ORIGINAL_DIRECTION_CHANCE) ? originalDir : net.minecraft.core.Direction.getRandom(random);
+    /** Calculates best grow direction (or absorbs resources if available)
+     * TODO list:
+     * Maybe make smart resource searching?
+     * @param packet An impulse generated by {@link NeoplasmCoreBlockEntity} */
+    public void performGrowth(Level level, BlockPos pos, BlockState state, ImpulsePacket packet) {
+        if (level.getBlockEntity(pos) instanceof NeoplasmVeinBlockEntity blockEntity) {
+            RandomSource random = level.getRandom();
+            // Original dir contains original "root vein" direction
+            Direction originalDir = blockEntity.growthDirection;
+            Direction growDir = null;
 
-        // Our special conditions to better vein spread
-        if (!conditions(level, pos, originalDir, growDir)) { return; }
+            // --- Gravity ---
+            // Increases vein chance to grow downwards when there is no wall
+            if (hasNoWallNearby(level, pos) && random.nextDouble() < FALL_CHANCE) {
+                if (conditions(level, pos, originalDir, Direction.DOWN, packet.hiveLevel())) {
+                    growDir = Direction.DOWN;
+                }
+            }
 
-        // We're trying to decrease chance of veins contact
-        // or increase spread chance, if there is unreplaceable block
-        // TODO make hivemind dependency
-        if (hasNeoplasmNearby(level, pos.relative(growDir), pos) || !ResourceRegistry.isReplaceable(level.getBlockState(pos.relative(growDir)), HivemindLevel.T1)) {
-            for (int i = 0; i < REROLL_ATTEMPTS; i++) {
-                net.minecraft.core.Direction newDir = net.minecraft.core.Direction.getRandom(random);
+            // --- Special conditions ---
+            if (growDir == null) {
+                Direction candidate = (random.nextDouble() < ORIGINAL_DIRECTION_CHANCE)
+                        ? originalDir : Direction.getRandom(random);
 
-                if (!hasNeoplasmNearby(level, pos.relative(newDir), pos)) {
-                    growDir = newDir;
-                    break;
+                if (conditions(level, pos, originalDir, candidate, packet.hiveLevel())) {
+                    growDir = candidate;
+                } else {
+                    // Reroll until we got the best direction for growth (with limited attempts)
+                    for (int i = 0; i < REROLL_ATTEMPTS; i++) {
+                        Direction rDir = Direction.getRandom(random);
+                        if (conditions(level, pos, originalDir, rDir, packet.hiveLevel())) {
+                            growDir = rDir;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // --- Last chance ---
+            // If we don't have better conditions,
+            // grow through any replaceable block in random direction
+            if (growDir == null) {
+                Collection<Direction> shuffled = getShuffledDirections(level.random);
+                for (Direction dir : shuffled) {
+                    if (isReplaceable(level.getBlockState(pos.relative(dir)), packet.hiveLevel())) {
+                        growDir = dir;
+                        break;
+                    }
+                }
+            }
+
+            // Deciding what vein supposed to do:
+            // Grow or absorb resource
+            ResourceResult nearbyResource = findResourceNearby(level, pos);
+            // Absorbing resources is more important for us than grow
+            if (nearbyResource != null) {
+                absorbWithRotBlock(level, pos.relative(nearbyResource.direction), nearbyResource.info, nearbyResource.state, pos, state);
+            } else if (growDir != null) {
+                BlockState targetState = level.getBlockState(pos.relative(growDir));
+                if (isReplaceable(targetState, packet.hiveLevel())) {
+                    grow(level, pos, state, growDir, originalDir);
                 }
             }
         }
+    }
 
-        // Increase vein chance to grow downwards when there is no wall
-        if (hasNoWallNearby(level, pos.relative(growDir))) {
-            if (random.nextDouble() < FALL_CHANCE) {
-                growDir = net.minecraft.core.Direction.DOWN;
-            }
+    /** Grows vein in calculated direction by {@code performGrowth}.
+     * and sets needed states to blocks */
+    private void grow(Level level, BlockPos pos, BlockState state, Direction growDir, Direction originalDir) {
+        // Current vein
+        BlockState newState = state.setValue(MATURE, true);
+        level.setBlock(pos, newState, Block.UPDATE_ALL);
+
+        if (level.getBlockEntity(pos) instanceof NeoplasmVeinBlockEntity be) {
+            be.childDirection = growDir;
+            be.setChanged();
         }
 
-        // Deciding what vein supposed to do:
-        // Spread or Absorb resource
-        ResourceResult nearbyResource = findResourceNearby(level, pos);
-        // Infection resource blocks is more important than spread
-        if (nearbyResource != null) {
-            absorbResources(level, pos.relative(nearbyResource.direction), nearbyResource.info, nearbyResource.state);
-        }
-        else {
-            BlockState targetState = level.getBlockState(pos.relative(growDir));
-            // TODO make hivemind dependency
-            if (ResourceRegistry.isReplaceable(targetState, HivemindLevel.T1)) {
-                grow(level, pos, state, random, growDir, originalDir);
-            }
+        // Target vein
+        BlockPos targetPos = pos.relative(growDir);
+
+        level.setBlock(targetPos, this.defaultBlockState(), Block.UPDATE_ALL);
+        if (level.getBlockEntity(targetPos) instanceof NeoplasmVeinBlockEntity be) {
+            be.growthDirection = originalDir;
+            be.parentDirection = growDir.getOpposite();
+            be.setChanged();
         }
     }
 
-    // Absorb
-    // Creates a "patient-zero" absorbed resource
-    // that continue spread rot blocks by himself
-    private void absorbResources(ServerLevel level, BlockPos targetPos, ResourceTypeEntry info, BlockState targetState) {
+    /** Sets in target position {@link NeoplasmRotBlock},
+     * that continue spread infection blocks by himself,
+     * and transfers absorbed resources to vein */
+    private void absorbWithRotBlock(Level level, BlockPos targetPos, ResourceTypeEntry info, BlockState targetState, BlockPos currentPos, BlockState currentState) {
+        // Absorb target
         level.setBlock(targetPos, ModBlocks.NEOPLASM_ROT_BLOCK.get().defaultBlockState()
-                .setValue(NeoplasmRotBlock.RESOURCE_TYPE, info.resourceType())
-                .setValue(NeoplasmRotBlock.LEVEL, info.level()), Block.UPDATE_CLIENTS);
+                .setValue(RESOURCE_TYPE, info.resourceType())
+                .setValue(RESOURCE_LEVEL, info.level()), Block.UPDATE_CLIENTS);
 
-        if (level.getBlockEntity(targetPos) instanceof NeoplasmRotBlockEntity devourBE) {
-            devourBE.setOriginalState(targetState);
-            devourBE.setChanged();
+        if (level.getBlockEntity(targetPos) instanceof NeoplasmRotBlockEntity blockEntity) {
+            blockEntity.setOriginalState(targetState);
+            blockEntity.setChanged();
+
             // Sync a little later for prevent desynchronization
             var server = level.getServer();
+            if (server == null) return;
             server.tell(new TickTask(server.getTickCount(), () -> {
-                if (level.isLoaded(targetPos) && level.getBlockEntity(targetPos) instanceof NeoplasmRotBlockEntity actualBe) {
-                    if (!actualBe.isRemoved()) {
-                        ModMessages.sendToClientsTracking(new SyncNeoplasmRotPacket(targetPos, actualBe.saveWithFullMetadata()), actualBe);
+                if (level.isLoaded(targetPos) && level.getBlockEntity(targetPos) instanceof NeoplasmRotBlockEntity actualBlockEntity) {
+                    if (!actualBlockEntity.isRemoved()) {
+                        ModMessages.sendToClientsTracking(new SyncNeoplasmRotPacket(targetPos, actualBlockEntity.saveWithFullMetadata()), actualBlockEntity);
                     }
                 }
             }));
         }
     }
 
-    // Grow
-    // Has a chance to "split" in different directions
-    // by just not setting current vein into mature
-    // and changing original grow direction (to spread nor in 1 dir.)
-    private void grow(ServerLevel level, BlockPos pos, BlockState state, RandomSource random, net.minecraft.core.Direction growDir, net.minecraft.core.Direction originalDir) {
+    //region Conditions
+
+    private static boolean conditions(Level level, BlockPos pos, Direction originalDir, Direction growDir, HivemindLevel hiveLevel) {
         BlockPos targetPos = pos.relative(growDir);
-        if (random.nextDouble() > BRANCHING_CHANCE) {
-            // Target block
-            level.setBlock(targetPos, this.defaultBlockState()
-                    .setValue(PARENT_DIRECTION, growDir.getOpposite())
-                    .setValue(FACING, originalDir), Block.UPDATE_ALL);
-            scheduleNextTick(level, targetPos);
-            // Current block
-            level.setBlock(pos, state.setValue(MATURE, true), Block.UPDATE_ALL);
-        } else if (!targetPos.relative(originalDir.getOpposite()).equals(pos)) {
-            net.minecraft.core.Direction nextDir = calculateOriginalDirection(pos, random, targetPos, originalDir);
-            if (nextDir == null) return;
-            // Only target block
-            level.setBlock(targetPos, this.defaultBlockState()
-                    .setValue(PARENT_DIRECTION, growDir.getOpposite())
-                    .setValue(FACING, nextDir), Block.UPDATE_ALL);
-            scheduleNextTick(level, targetPos);
-        }
-    }
+        BlockState targetState = level.getBlockState(targetPos);
 
-    private static net.minecraft.core.Direction calculateOriginalDirection(BlockPos pos, RandomSource random, BlockPos targetPos, net.minecraft.core.Direction originalDir) {
-        // Branch direction calculator
-        net.minecraft.core.Direction branchDir = null;
-        net.minecraft.core.Direction nextDir;
-        // Calculating relative coordinates
-        for (net.minecraft.core.Direction dir : DIRECTIONS) {
-            if (targetPos.relative(dir.getOpposite()).equals(pos)) {
-                branchDir = dir;
-                break;
-            }
-        }
-        if (branchDir == null) return null;
+        // Base: can be target replaced?
+        if (!isReplaceable(targetState, hiveLevel)) return false;
 
-        // Don't allow to set facing vertical
-        // or opposite from original direction
-        if (branchDir.getAxis().isVertical()) {
-            do {
-                branchDir = net.minecraft.core.Direction.getRandom(random);
-            } while (branchDir.getAxis().isVertical() || branchDir == originalDir.getOpposite());
-        }
-        nextDir = branchDir;
-        return nextDir;
-    }
+        // Check neighbor vein limit (except from which we grew)
+        if (hasTooManyNeoplasmNearby(level, targetPos, pos, NEIGHBOR_LIMIT)) return false;
 
-    private static boolean conditions(Level level, BlockPos pos, net.minecraft.core.Direction originalDir, net.minecraft.core.Direction growDir) {
         // Don't allow to grow backwards
         if (growDir == originalDir.getOpposite()) return false;
+
         // Don't allow to climb up without wall
-        if (growDir == net.minecraft.core.Direction.UP && hasNoWallNearby(level, pos.relative(growDir))) return false;
+        if (growDir == Direction.UP && hasNoWallNearby(level, pos.relative(growDir))) return false;
+
+        // TEST CONDITION
+        if (hasNoWallNearby(level, pos.relative(growDir)) && growDir.getAxis().isHorizontal()) return false;
 
         return true;
-    }
-
-    private static int spreadSpeedModifiers(Level level, double delay) {
-        if (level.isRaining()) delay *= RAIN_WEATHER_SPREAD_MODIFIER;
-        if (level.isNight()) delay *= NIGHT_SPREAD_MODIFIER;
-        return (int) Math.ceil(delay);
     }
 
     private static boolean hasNoWallNearby(Level level, BlockPos pos) {
@@ -226,85 +216,63 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
         return true;
     }
 
-    private static boolean hasNeoplasmNearby(Level level, BlockPos targetPos, BlockPos currentPos) {
-        for (net.minecraft.core.Direction d : DIRECTIONS) {
-            BlockPos neighbor = targetPos.relative(d);
-            if (!neighbor.equals(currentPos) && level.getBlockState(neighbor).getBlock() instanceof INeoplasmNode) {
-                return true;
+    private static boolean hasTooManyNeoplasmNearby(Level level, BlockPos targetPos, BlockPos currentPos, int limit) {
+        int neoplasmCount = 0;
+        for (Direction dir : DIRECTIONS) {
+            BlockPos neighbor = targetPos.relative(dir);
+            BlockState state = level.getBlockState(neighbor);
+            if (!neighbor.equals(currentPos) && state.getBlock() instanceof INeoplasmNode node && node.isVein()) {
+                neoplasmCount++;
             }
         }
-        return false;
+        return neoplasmCount >= limit;
     }
 
-    private record ResourceResult(net.minecraft.core.Direction direction, ResourceTypeEntry info, BlockState state) {}
+    //endregion
+
+    private record ResourceResult(Direction direction, ResourceTypeEntry info, BlockState state) {}
 
     private static ResourceResult findResourceNearby(Level level, BlockPos pos) {
-        for (net.minecraft.core.Direction d : DIRECTIONS) {
-            BlockPos checkPos = pos.relative(d);
+        Collection<Direction> shuffled = getShuffledDirections(level.random);
+        for (Direction dir : shuffled) {
+            BlockPos checkPos = pos.relative(dir);
             BlockState state = level.getBlockState(checkPos);
-            ResourceTypeEntry info = ResourceRegistry.getResourceInfo(state.getBlock());
+            ResourceTypeEntry info = getResourceInfo(state.getBlock());
 
             if (info.resourceType().isResource()) {
-                return new ResourceResult(d, info, state);
+                return new ResourceResult(dir, info, state);
             }
         }
         return null;
     }
 
-    private static boolean hasNonMatureNearby(Level level, BlockPos pos) {
-        for (net.minecraft.core.Direction d : DIRECTIONS) {
-            BlockPos checkPos = pos.relative(d);
-            BlockState state = level.getBlockState(checkPos);
-
-            if (state.hasProperty(MATURE) && !state.getValue(MATURE)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    @Override public boolean isVein() { return true; }
 
     @Override
-    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+    public void setPlacedBy(Level level, @NotNull BlockPos pos, @NotNull BlockState state, LivingEntity placer, @NotNull ItemStack stack) {
+        if (!level.isClientSide) {
+            if (level.getBlockEntity(pos) instanceof NeoplasmVeinBlockEntity be) {
+                be.growthDirection = HORIZONTAL_DIRECTIONS[level.random.nextInt(HORIZONTAL_DIRECTIONS.length)];
+            }
+        }
+    }
+
+    @Override public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new NeoplasmVeinBlockEntity(pos, state);
     }
 
-    @Override
-    public void tick(BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
-        if (state.getValue(HAS_NUTRIENT)) {
-            if (level.getBlockEntity(pos) instanceof NeoplasmVeinBlockEntity blockEntity) {
-                blockEntity.tick(level, pos, state, blockEntity);
-            }
-        }
-        // Only a "young" vein (which is not yet mature) can grow
-        if (!state.getValue(MATURE)) {
-            performGrowth(level, pos, state, random);
-        }
-        scheduleNextTick(level, pos);
-    }
-
-    @Override
-    public void randomTick(BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
-        if (!state.getValue(MATURE)) {
-            // Random tick for faster spread and
-            // if block schedule chain is broken, trying to launch it again
-            performGrowth(level, pos, state, random);
-        }
-    }
-
-    @Override
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
+    @Override public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
     public void onRemove(BlockState state, @NotNull Level level, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.is(newState.getBlock())) {
-            super.onRemove(state, level, pos, newState, isMoving);
+        if (state.getBlock() == newState.getBlock()) {
             return;
         }
         // If the living end of our vein is destroyed, we make the previous block young again
         // (and all neighbors too)
-        for (net.minecraft.core.Direction dir : DIRECTIONS) {
+        for (Direction dir : DIRECTIONS) {
             BlockPos neighborPos = pos.relative(dir);
             BlockState neighborState = level.getBlockState(neighborPos);
 
@@ -320,20 +288,20 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
         super.onRemove(state, level, pos, newState, isMoving);
     }
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, MATURE, PARENT_DIRECTION, HAS_NUTRIENT);
+    private static boolean hasNonMatureNearby(Level level, BlockPos pos) {
+        for (Direction dir : DIRECTIONS) {
+            BlockPos checkPos = pos.relative(dir);
+            BlockState state = level.getBlockState(checkPos);
+
+            if (state.hasProperty(MATURE) && !state.getValue(MATURE)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
-    }
-
-    @Override
-    public void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean isMoving) {
-        super.onPlace(state, level, pos, oldState, isMoving);
-        scheduleNextTick(level, pos);
+    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(MATURE, HAS_NUTRIENT);
     }
 
     @Override
