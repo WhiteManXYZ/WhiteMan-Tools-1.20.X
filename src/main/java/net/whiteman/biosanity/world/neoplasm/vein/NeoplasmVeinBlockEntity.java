@@ -14,39 +14,54 @@ import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBlockEntity;
 import net.whiteman.biosanity.world.neoplasm.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 
+import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConfig.TICKS_TO_SEND_IMPULSE;
+import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConfig.TICKS_TO_TRANSFER_NUTRIENT;
 import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConstants.DIRECTIONS;
-import static net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBlock.HAS_NUTRIENT;
-import static net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBlock.PARENT_DIRECTION;
+import static net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBlock.*;
 
 public class NeoplasmVeinBlockEntity extends BlockEntity {
-    public static final int TICKS_TO_TRANSFER_NUTRIENT = 5;
+    public Direction growthDirection = Direction.DOWN;
+    public Direction parentDirection = Direction.DOWN;
+    public Direction childDirection = Direction.DOWN;
 
     private ResourceType heldResourceType = ResourceType.NONE;
     private int heldResourceLevel = 0;
     private int transferCooldown = 0;
+
+    private ImpulsePacket activeImpulse = null;
+    private int impulseCooldown = 0;
 
     public NeoplasmVeinBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.NEOPLASM_VEIN_BE.get(), pPos, pBlockState);
     }
 
     public void tick(Level level, BlockPos pos, BlockState state, NeoplasmVeinBlockEntity be) {
-        if (!state.getValue(HAS_NUTRIENT) || be.heldResourceType == ResourceType.NONE) return;
+        if (state.getValue(HAS_NUTRIENT) || be.heldResourceType != ResourceType.NONE) {
+            // Transfer countdown
+            if (be.transferCooldown > 0) {
+                be.transferCooldown--;
+                return;
+            }
 
-        // Transfer countdown
-        if (be.transferCooldown > 0) {
-            be.transferCooldown--;
-            return;
+            be.transferNutrient(level, pos, state);
         }
 
-        be.transferNutrient(level, pos, state);
+        if (be.activeImpulse != null) {
+            // Send countdown
+            if (be.impulseCooldown > 0) {
+                be.impulseCooldown--;
+                return;
+            }
+
+            be.sendImpulse(level, pos, state);
+        }
     }
 
-    // Nutrient transfer
-    // Transfers nutrients to core using "chain" method
+    /** Transfers nutrients to core by chain method */
     private void transferNutrient(Level level, BlockPos pos, BlockState state) {
         if (level.isClientSide) return;
 
-        Direction toParent = state.getValue(PARENT_DIRECTION);
+        Direction toParent = parentDirection;
         BlockPos targetPos = pos.relative(toParent);
         BlockState targetState = level.getBlockState(targetPos);
         BlockEntity targetEntity = level.getBlockEntity(targetPos);
@@ -117,18 +132,72 @@ public class NeoplasmVeinBlockEntity extends BlockEntity {
         }
     }
 
-    @Override
-    protected void saveAdditional(CompoundTag tag) {
-        tag.putString("heldResourceType", heldResourceType.name());
-        tag.putInt("heldResourceLevel", heldResourceLevel);
-        super.saveAdditional(tag);
+    /** Sends impulse by chain method to the vein end */
+    private void sendImpulse(Level level, BlockPos pos, BlockState state) {
+        if (level.isClientSide) return;
+
+        // If we are the end of the vein, we receive the impulse
+        if (!state.getValue(MATURE)) {
+            acceptImpulse(activeImpulse);
+            return;
+        }
+
+        Direction toChild = childDirection;
+        BlockPos targetPos = pos.relative(toChild);
+        BlockState targetState = level.getBlockState(targetPos);
+        BlockEntity targetEntity = level.getBlockEntity(targetPos);
+
+        if (targetState.getBlock() instanceof NeoplasmVeinBlock block) {
+            if (targetEntity instanceof NeoplasmVeinBlockEntity blockEntity) {
+
+                blockEntity.setImpulsePacket(activeImpulse);
+                blockEntity.setImpulseSendingCooldown(TICKS_TO_SEND_IMPULSE);
+            }
+
+            // TEST PARTICLE
+            if (level instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(
+                        ParticleTypes.BUBBLE_POP,
+                        targetPos.getX() + 0.5,
+                        targetPos.getY() + 0.7,
+                        targetPos.getZ() + 0.5,
+                        10,
+                        0.4, 0.4, 0.4,
+                        0.05
+                );
+            }
+        }
+        else {
+            if (level.getBlockEntity(activeImpulse.sourceCore()) instanceof NeoplasmCoreBlockEntity blockEntity) {
+                blockEntity.receiveFailedImpulse(activeImpulse);
+            } else {
+                System.out.printf("Impulse %s lost in position: %s and don't returned result to core!\n", activeImpulse, targetPos);
+            }
+        }
+
+        clearImpulse();
     }
 
-    @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
-        this.heldResourceType = ResourceType.valueOf(tag.getString("heldResourceType"));
-        this.heldResourceLevel = tag.getInt("heldResourceLevel");
+    /** Accepts impulse and do some action depending on {@link ImpulseType} */
+    private void acceptImpulse(ImpulsePacket packet) {
+        if (level == null || level.isClientSide || packet == null) return;
+        BlockState state = level.getBlockState(worldPosition);
+
+        if (state.getBlock() instanceof NeoplasmVeinBlock veinBlock) {
+            switch (packet.type()) {
+                case GROW -> {
+                    if (veinBlock.canSpread(level, worldPosition, packet.hiveLevel())) {
+                        veinBlock.performGrowth(level, worldPosition, state, packet);
+                    }
+                }
+                case SCAN -> System.out.println("SCAN");
+            }
+        }
+        if (level.getBlockEntity(packet.sourceCore()) instanceof NeoplasmCoreBlockEntity blockEntity) {
+            blockEntity.receiveImpulseSuccess(packet);
+        }
+
+        clearImpulse();
     }
 
     public void setData(ResourceType type, int level) {
@@ -145,5 +214,51 @@ public class NeoplasmVeinBlockEntity extends BlockEntity {
 
     public void setNutrientTransferCooldown(int ticks) {
         this.transferCooldown = ticks;
+    }
+
+    public void setImpulsePacket(ImpulsePacket packet) {
+        this.activeImpulse = packet;
+        this.setChanged();
+    }
+
+    public void clearImpulse() {
+        this.activeImpulse = null;
+        this.setChanged();
+    }
+
+    public void setImpulseSendingCooldown(int ticks) {
+        this.impulseCooldown = ticks;
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        tag.putString("held_resource_type", heldResourceType.name());
+        tag.putInt("held_resourceLevel", heldResourceLevel);
+
+        if (activeImpulse != null) {
+            tag.put("active_impulse", activeImpulse.toNBT());
+            tag.putInt("impulse_cooldown", impulseCooldown);
+        }
+
+        tag.putInt("growth_direction", this.growthDirection.get3DDataValue());
+        tag.putInt("parent_direction", this.parentDirection.get3DDataValue());
+        tag.putInt("child_direction", this.childDirection.get3DDataValue());
+        super.saveAdditional(tag);
+    }
+
+    @Override
+    public void load(@NotNull CompoundTag tag) {
+        super.load(tag);
+        this.heldResourceType = ResourceType.valueOf(tag.getString("held_resource_type"));
+        this.heldResourceLevel = tag.getInt("held_resourceLevel");
+
+        if (tag.contains("active_impulse")) {
+            this.activeImpulse = ImpulsePacket.fromNBT(tag.getCompound("active_impulse"));
+            this.impulseCooldown = tag.getInt("impulse_cooldown");
+        }
+
+        this.growthDirection = Direction.from3DDataValue(tag.getInt("growth_direction"));
+        this.parentDirection = Direction.from3DDataValue(tag.getInt("parent_direction"));
+        this.childDirection = Direction.from3DDataValue(tag.getInt("child_direction"));
     }
 }
