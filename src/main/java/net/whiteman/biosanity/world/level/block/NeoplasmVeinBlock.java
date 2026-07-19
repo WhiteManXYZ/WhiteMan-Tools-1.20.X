@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.whiteman.biosanity.message.ModMessages;
-import net.whiteman.biosanity.message.synchronization.SyncNeoplasmRotPacket;
+import net.whiteman.biosanity.message.sync.SyncNeoplasmRotPacket;
 import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
 import net.whiteman.biosanity.world.level.block.entity.NeoplasmVeinBE;
 import net.whiteman.biosanity.world.level.neoplasm.common.INeoplasmNode;

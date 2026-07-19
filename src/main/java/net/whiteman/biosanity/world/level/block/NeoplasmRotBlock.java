@@ -31,7 +31,7 @@ import net.whiteman.biosanity.world.level.block.entity.NeoplasmRotBE;
 import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
 import net.whiteman.biosanity.world.item.ModItems;
 import net.whiteman.biosanity.message.ModMessages;
-import net.whiteman.biosanity.message.synchronization.SyncNeoplasmRotPacket;
+import net.whiteman.biosanity.message.sync.SyncNeoplasmRotPacket;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;

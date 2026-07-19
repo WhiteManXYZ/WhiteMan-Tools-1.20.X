@@ -1,4 +1,4 @@
-package net.whiteman.biosanity.message.synchronization;
+package net.whiteman.biosanity.message.sync;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

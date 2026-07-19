@@ -8,7 +8,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.whiteman.biosanity.BiosanityMod;
-import net.whiteman.biosanity.message.synchronization.SyncNeoplasmRotPacket;
+import net.whiteman.biosanity.message.sync.SyncNeoplasmRotPacket;
 
 public class ModMessages {
     private static SimpleChannel INSTANCE;
