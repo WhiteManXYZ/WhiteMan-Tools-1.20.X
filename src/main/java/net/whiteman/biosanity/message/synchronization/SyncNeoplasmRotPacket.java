@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
-import net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBE;
+import net.whiteman.biosanity.world.level.block.entity.NeoplasmRotBE;
 
 import java.util.function.Supplier;
 

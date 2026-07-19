@@ -12,10 +12,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.whiteman.biosanity.BiosanityMod;
-import net.whiteman.biosanity.world.neoplasm.common.block.NeoplasmBlock;
-import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBlock;
-import net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBlock;
-import net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBlock;
 import net.whiteman.biosanity.world.item.ModItems;
 
 import java.util.function.Supplier;

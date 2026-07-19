@@ -7,9 +7,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.whiteman.biosanity.BiosanityMod;
 import net.whiteman.biosanity.world.level.block.ModBlocks;
-import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
-import net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBE;
-import net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBE;
 
 public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =

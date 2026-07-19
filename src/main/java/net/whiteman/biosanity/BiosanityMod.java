@@ -25,7 +25,7 @@ import net.whiteman.biosanity.world.item.ModItems;
 import net.whiteman.biosanity.world.item.crafting.ModRecipes;
 import net.whiteman.biosanity.world.level.block.ModBlocks;
 import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
-import net.whiteman.biosanity.world.neoplasm.resource.ResourceRegistry;
+import net.whiteman.biosanity.world.level.neoplasm.resource.ResourceRegistry;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(BiosanityMod.MOD_ID)

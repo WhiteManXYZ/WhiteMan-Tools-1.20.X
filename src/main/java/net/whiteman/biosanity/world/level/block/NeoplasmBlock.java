@@ -1,0 +1,55 @@
+package net.whiteman.biosanity.world.level.block;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
+import net.whiteman.biosanity.world.level.neoplasm.common.INeoplasmNode;
+import org.jetbrains.annotations.NotNull;
+
+public class NeoplasmBlock extends Block implements INeoplasmNode {
+    public static BlockBehaviour.Properties getDefaultProperties() {
+        return BlockBehaviour.Properties.of()
+                .friction(0.8F)
+                .strength(1.0F, 3.0F)
+                .ignitedByLava()
+                .sound(SoundType.SLIME_BLOCK)
+                .mapColor(MapColor.TERRACOTTA_RED);
+    }
+
+    public NeoplasmBlock(Properties pProperties) { super(pProperties); }
+
+    @Override
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
+        return RenderShape.MODEL;
+    }
+
+    @Override
+    public boolean isFlammable(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return true;
+    }
+
+    @Override
+    public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return 2;
+    }
+
+    @Override
+    public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return 1;
+    }
+
+    @Override
+    public void fallOn(@NotNull Level level, @NotNull BlockState state, @NotNull BlockPos pos, @NotNull Entity entity, float fallDistance) {
+        // Due to the fleshy origin of the neoplasm
+        // we reduce for a little fall damage
+        super.fallOn(level, state, pos, entity, fallDistance * 0.85F);
+    }
+}
