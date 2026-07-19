@@ -1,11 +1,12 @@
-package net.whiteman.biosanity.world.neoplasm.ai;
+package net.whiteman.biosanity.world.neoplasm.ai.goals;
 
+import net.whiteman.biosanity.world.neoplasm.ai.AbstractGoal;
 import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 
-public class IdleGoal extends AbstractGoal {
+public class Idle extends AbstractGoal {
     private final int goalCooldown;
 
-    public IdleGoal(NeoplasmCoreBE core, double baseWeight, int goalCooldown) {
+    public Idle(NeoplasmCoreBE core, double baseWeight, int goalCooldown) {
         super(core, baseWeight);
         this.goalCooldown = goalCooldown;
     }

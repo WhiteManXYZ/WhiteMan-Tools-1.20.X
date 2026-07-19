@@ -1,39 +1,32 @@
-package net.whiteman.biosanity.world.neoplasm.ai;
+package net.whiteman.biosanity.world.neoplasm.ai.goals;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.whiteman.biosanity.world.level.block.ModBlocks;
+import net.whiteman.biosanity.world.neoplasm.ai.AbstractGoal;
 import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 import net.whiteman.biosanity.world.neoplasm.core.hivemind.AlertLevel;
 import net.whiteman.biosanity.world.neoplasm.core.hivemind.Hivemind;
 
 import java.util.List;
 
-import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConstants.DIRECTIONS;
-import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConfig.HIVEMIND_MAX_CORES;
 import static net.whiteman.biosanity.world.neoplasm.resource.ResourceRegistry.isReplaceable;
 
-public class ExpandHivemindGoal extends AbstractGoal {
+public class GrowNewVein extends AbstractGoal {
     private final int goalCooldown;
-    private final int biomassCost = 15;
-    private final int staminaCost = 30;
+    private final int biomassCost = 2;
+    private final int staminaCost = 5;
 
-    public ExpandHivemindGoal(NeoplasmCoreBE core, double baseWeight, int goalCooldown) {
+    public GrowNewVein(NeoplasmCoreBE core, double baseWeight, int goalCooldown) {
         super(core, baseWeight);
         this.goalCooldown = goalCooldown;
     }
-
-    @Override public boolean isStackable() { return false; }
 
     @Override
     public boolean canUse() {
         Level level = core.getLevel();
         Hivemind hivemind = getHivemind();
         if (level == null || hivemind == null) return false;
-
-        // If Hivemind is full, return
-        if (hivemind.getAllMembers().size() >= HIVEMIND_MAX_CORES) return false;
 
         // If we don't space to grow, return
         if (!hasAnySpaceToGrow(level)) return false;
@@ -42,7 +35,6 @@ public class ExpandHivemindGoal extends AbstractGoal {
         return (hivemind.getBiomass() >= biomassCost && hivemind.getStamina() >= staminaCost);
     }
 
-    @Override
     public double evaluateUtility() {
         Hivemind hivemind = getHivemind();
         if (hivemind == null) return 0;
@@ -54,38 +46,31 @@ public class ExpandHivemindGoal extends AbstractGoal {
         double staminaFactor = (double) hivemind.getStamina() / hivemind.getMaxStamina();
         utility *= staminaFactor;
 
-        // If there are enough resources, we increase expanding weight
+        // If there are enough resources, we increase a little growth weight
         double biomassFactor = (double) hivemind.getBiomass() / hivemind.getStorage();
-        if (biomassFactor > 0.85d) {
-            utility += 0.7 * baseWeight;
+        if (biomassFactor > 0.75d) {
+            utility += 0.3 * baseWeight;
         }
 
-        // If storages is almost full, increase expanding weight
-        double storage = hivemind.getStorage();
-        if (storage > 0) {
-            double fullness = hivemind.getAverageResourcesAmount() / storage;
+        // Excess factor, if core has enough veins near, decrease growth weight
+        List<BlockPos> nearbyVeins = core.findNeighborVeins();
+        if (nearbyVeins != null && !nearbyVeins.isEmpty()) {
+            // Custom divide factor: about -1.66~ weight per nearby vein
+            double nearbyAmountFactor = (double) (nearbyVeins.size() / 6) * 0.4;
 
-            if (fullness > 0.8d)  utility += fullness * baseWeight;
-        }
-
-        // Clumping factor, if there too much cores near, decrease expanding weight
-        List<BlockPos> neighbors = core.findNeighborCores();
-        if (neighbors != null && !neighbors.isEmpty()) {
-            double neighborsFactor = (double) (neighbors.size() / 6) * 0.5;
-
-            utility += -neighborsFactor * baseWeight;
+            utility += -nearbyAmountFactor * baseWeight;
         }
 
         // Danger factor, if the Hivemind is on alert, the desire to expand highly drops
         if (hivemind.getAlertLevel() != AlertLevel.CALM) {
-            utility *= 0.4;
+            utility *= 0.2d;
         }
 
         return Math.max(0, utility);
     }
 
     @Override public void start() {
-        System.out.println(getHivemind().getId() + ": core expanding...");
+        System.out.println(getHivemind().getId() + ": Started growth!");
         resetTimer(goalCooldown);
     }
 
@@ -99,10 +84,11 @@ public class ExpandHivemindGoal extends AbstractGoal {
         if (timer >= currentCooldown) {
             Direction dir = Direction.getRandom(level.random);
 
-            if (!isReplaceable(level.getBlockState(core.getBlockPos().relative(dir)), hivemind.getLevel())
-                    && !level.getBlockState(core.getBlockPos().relative(dir)).is(ModBlocks.NEOPLASM_VEIN_BLOCK.get())) return;
+            if (dir.getAxis().isVertical()) return;
 
-            if (core.expandCore(dir)) {
+            if (!isReplaceable(level.getBlockState(core.getBlockPos().relative(dir)), hivemind.getLevel())) return;
+
+            if (core.growNewVein(dir)) {
                 hivemind.modifyBiomass(-biomassCost);
                 hivemind.modifyStamina(-staminaCost);
                 resetTimer(goalCooldown);
@@ -111,13 +97,13 @@ public class ExpandHivemindGoal extends AbstractGoal {
     }
 
     @Override public void stop() {
-        System.out.println(getHivemind().getId() + ": Stopped expand...");
+        System.out.println(getHivemind().getId() + ": Stop growth.");
     }
 
     private boolean hasAnySpaceToGrow(Level level) {
         BlockPos pos = core.getBlockPos();
-        for (Direction dir : DIRECTIONS) {
-            if (isReplaceable(level.getBlockState(pos.relative(dir)), getHivemind().getLevel()) || level.getBlockState(pos.relative(dir)).is(ModBlocks.NEOPLASM_VEIN_BLOCK.get())) {
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            if (isReplaceable(level.getBlockState(pos.relative(dir)), getHivemind().getLevel())) {
                 return true;
             }
         }

@@ -1,5 +1,9 @@
 package net.whiteman.biosanity.world.neoplasm.ai;
 
+import net.whiteman.biosanity.world.neoplasm.ai.goals.ExpandHivemind;
+import net.whiteman.biosanity.world.neoplasm.ai.goals.GrowNewVein;
+import net.whiteman.biosanity.world.neoplasm.ai.goals.GrowVein;
+import net.whiteman.biosanity.world.neoplasm.ai.goals.Idle;
 import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 
 import java.util.ArrayList;
@@ -13,12 +17,12 @@ public class GoalRegistry {
 
     static {
         // Growth & expansion
-        register(core -> new GrowVeinGoal(core, 20d, 140));
-        register(core -> new GrowNewVeinGoal(core, 25d, 200));
-        register(core -> new ExpandHivemindGoal(core, 20d, 420));
+        register(core -> new GrowVein(core, 20d, 140));
+        register(core -> new GrowNewVein(core, 25d, 200));
+        register(core -> new ExpandHivemind(core, 20d, 420));
 
         // Idle
-        register(core -> new IdleGoal(core, 10d, 20));
+        register(core -> new Idle(core, 10d, 20));
     }
 
     public static void register(Function<NeoplasmCoreBE, IHivemindGoal> factory) {

@@ -1,8 +1,9 @@
-package net.whiteman.biosanity.world.neoplasm.ai;
+package net.whiteman.biosanity.world.neoplasm.ai.goals;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.whiteman.biosanity.world.neoplasm.ai.AbstractGoal;
 import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 import net.whiteman.biosanity.world.neoplasm.core.hivemind.Hivemind;
 import net.whiteman.biosanity.world.neoplasm.vein.ImpulseType;
@@ -10,14 +11,14 @@ import net.whiteman.biosanity.world.neoplasm.vein.ImpulseType;
 import java.util.List;
 
 /** Sends an impulse to grow from core */
-public class GrowVeinGoal extends AbstractGoal {
+public class GrowVein extends AbstractGoal {
     private final int goalCooldown;
     private final int biomassCost = 1;
     private final int staminaCost = 3;
 
     private List<BlockPos> connectedVeins;
 
-    public GrowVeinGoal(NeoplasmCoreBE core, double baseWeight, int goalCooldown) {
+    public GrowVein(NeoplasmCoreBE core, double baseWeight, int goalCooldown) {
         super(core, baseWeight);
         this.goalCooldown = goalCooldown;
     }
