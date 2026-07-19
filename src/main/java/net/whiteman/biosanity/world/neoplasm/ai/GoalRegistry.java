@@ -1,6 +1,6 @@
 package net.whiteman.biosanity.world.neoplasm.ai;
 
-import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class GoalRegistry {
-    private static final List<Function<NeoplasmCoreBlockEntity, IHivemindGoal>> GOAL_FACTORIES = new ArrayList<>();
+    private static final List<Function<NeoplasmCoreBE, IHivemindGoal>> GOAL_FACTORIES = new ArrayList<>();
 
     static {
         // Growth & expansion
@@ -21,12 +21,12 @@ public class GoalRegistry {
         register(core -> new IdleGoal(core, 10d, 20));
     }
 
-    public static void register(Function<NeoplasmCoreBlockEntity, IHivemindGoal> factory) {
+    public static void register(Function<NeoplasmCoreBE, IHivemindGoal> factory) {
         GOAL_FACTORIES.add(factory);
     }
 
     /** Creates a fresh list of all available tasks for a particular core */
-    public static List<IHivemindGoal> createGoalsFor(NeoplasmCoreBlockEntity core) {
+    public static List<IHivemindGoal> createGoalsFor(NeoplasmCoreBE core) {
         List<IHivemindGoal> instantiatedGoals = new ArrayList<>();
 
         for (var factory : GOAL_FACTORIES) {
@@ -41,7 +41,7 @@ public class GoalRegistry {
         return instantiatedGoals;
     }
 
-    public static List<Function<NeoplasmCoreBlockEntity, IHivemindGoal>> getFactories() {
+    public static List<Function<NeoplasmCoreBE, IHivemindGoal>> getFactories() {
         return Collections.unmodifiableList(GOAL_FACTORIES);
     }
 }

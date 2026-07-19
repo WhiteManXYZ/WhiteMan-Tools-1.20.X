@@ -13,7 +13,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.whiteman.biosanity.world.item.ModItems;
 import net.whiteman.biosanity.world.level.block.ModBlocks;
-import net.whiteman.biosanity.world.level.block.entity.PurificationStationBlockEntity;
+import net.whiteman.biosanity.world.level.block.entity.PurificationStationBE;
 import net.whiteman.biosanity.world.util.ColoredItemsRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +25,7 @@ public class PurificationStationMenu extends AbstractContainerMenu {
     public static final int MODIFIER_SLOT = 2;
     public static final int RESULT_SLOT = 3;
     public static final int SLOT_COUNT = 4;
-    public final PurificationStationBlockEntity blockEntity;
+    public final PurificationStationBE blockEntity;
     private final Level level;
     private final ContainerData data;
 
@@ -36,7 +36,7 @@ public class PurificationStationMenu extends AbstractContainerMenu {
     public PurificationStationMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
         super(ModMenuTypes.PURIFICATION_STATION_BLOCK_MENU.get(), pContainerId);
         checkContainerSize(inv, SLOT_COUNT);
-        if (entity instanceof PurificationStationBlockEntity be) {
+        if (entity instanceof PurificationStationBE be) {
             this.blockEntity = be;
         } else {
             this.blockEntity = null;
@@ -147,11 +147,11 @@ public class PurificationStationMenu extends AbstractContainerMenu {
     }
 
     private boolean isFuel(ItemStack pStack) {
-        return PurificationStationBlockEntity.ALLOWED_FUEL.test(pStack);
+        return PurificationStationBE.ALLOWED_FUEL.test(pStack);
     }
 
     private boolean isModifier(ItemStack pStack) {
-        return PurificationStationBlockEntity.ALLOWED_MODIFICATORS.test(pStack);
+        return PurificationStationBE.ALLOWED_MODIFICATORS.test(pStack);
     }
 
     private void addPlayerInventory(Inventory playerInventory) {

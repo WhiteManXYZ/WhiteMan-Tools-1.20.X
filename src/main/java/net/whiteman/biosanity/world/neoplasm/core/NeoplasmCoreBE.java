@@ -23,7 +23,7 @@ import net.whiteman.biosanity.world.neoplasm.resource.ResourceType;
 import net.whiteman.biosanity.world.neoplasm.vein.ImpulsePacket;
 import net.whiteman.biosanity.world.neoplasm.vein.ImpulseType;
 import net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBlock;
-import net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBE;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
@@ -34,7 +34,7 @@ import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConfig.*;
 import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConstants.DIRECTIONS;
 import static net.whiteman.biosanity.world.neoplasm.resource.ResourceRegistry.MAX_RESOURCE_LEVEL;
 
-public class NeoplasmCoreBlockEntity extends BlockEntity {
+public class NeoplasmCoreBE extends BlockEntity {
     private UUID hivemindId;
     private IHivemindGoal currentGoal;
 
@@ -49,11 +49,11 @@ public class NeoplasmCoreBlockEntity extends BlockEntity {
     private record PendingImpulse(ImpulsePacket packet, long sentTime) {}
     private final Map<Integer, PendingImpulse> pendingImpulses = new HashMap<>();
 
-    public NeoplasmCoreBlockEntity(BlockPos pPos, BlockState pBlockState) {
+    public NeoplasmCoreBE(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.NEOPLASM_CORE_BE.get(), pPos, pBlockState);
     }
 
-    public void tick(Level level, BlockPos pos, BlockState state, NeoplasmCoreBlockEntity blockEntity) {
+    public void tick(Level level, BlockPos pos, BlockState state, NeoplasmCoreBE blockEntity) {
         if (level.isClientSide) return;
 
         Hivemind hive = HivemindManager.get(level).getHivemindByPos(pos);
@@ -112,7 +112,7 @@ public class NeoplasmCoreBlockEntity extends BlockEntity {
 
         BlockPos targetPos = this.worldPosition.relative(dir);
         flag = level.setBlock(targetPos, ModBlocks.NEOPLASM_VEIN_BLOCK.get().defaultBlockState(), 3);
-        if (level.getBlockEntity(targetPos) instanceof NeoplasmVeinBlockEntity blockEntity) {
+        if (level.getBlockEntity(targetPos) instanceof NeoplasmVeinBE blockEntity) {
             blockEntity.growthDirection = dir;
             blockEntity.parentDirection = dir.getOpposite();
             flag2 = true;
@@ -151,7 +151,7 @@ public class NeoplasmCoreBlockEntity extends BlockEntity {
     public boolean sendImpulse(ImpulseType type, HivemindLevel level, Direction dir) {
         if (this.level == null || this.level.isClientSide) return false;
 
-        if (this.level.getBlockEntity(worldPosition.relative(dir)) instanceof NeoplasmVeinBlockEntity be) {
+        if (this.level.getBlockEntity(worldPosition.relative(dir)) instanceof NeoplasmVeinBE be) {
             generateImpulseId();
             int id = this.nextImpulseId;
 

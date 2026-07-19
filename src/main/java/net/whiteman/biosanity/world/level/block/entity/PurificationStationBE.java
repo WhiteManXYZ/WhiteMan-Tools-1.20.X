@@ -47,7 +47,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class PurificationStationBlockEntity extends BlockEntity implements MenuProvider {
+public class PurificationStationBE extends BlockEntity implements MenuProvider {
     private static final int SLOT_INPUT = 0;
     private static final int SLOT_FUEL = 1;
     private static final int SLOT_MODIFIER = 2;
@@ -103,21 +103,21 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
     private ModifierUtils.ModifierType modifier_type = ModifierUtils.ModifierType.NONE;
     public record ModifierState(ModifierUtils.ModifierType type, int amount) {}
 
-    public PurificationStationBlockEntity(BlockPos pos, BlockState blockState) {
+    public PurificationStationBE(BlockPos pos, BlockState blockState) {
         super(ModBlockEntities.PURIFICATION_STATION_BE.get(), pos, blockState);
         this.data = new ContainerData() {
             @Override
             public int get(int index) {
                 return switch (index) {
-                    case 0 -> PurificationStationBlockEntity.this.progress;
-                    case 1 -> PurificationStationBlockEntity.this.fuel;
-                    case 2 -> PurificationStationBlockEntity.this.pressure;
-                    case 3 -> PurificationStationBlockEntity.this.modifier_amount;
-                    case 4 -> PurificationStationBlockEntity.this.fuel_conversion_progress;
-                    case 5 -> PurificationStationBlockEntity.this.getPurificationTime();
-                    case 6 -> PurificationStationBlockEntity.this.modifier_type.ordinal();
+                    case 0 -> PurificationStationBE.this.progress;
+                    case 1 -> PurificationStationBE.this.fuel;
+                    case 2 -> PurificationStationBE.this.pressure;
+                    case 3 -> PurificationStationBE.this.modifier_amount;
+                    case 4 -> PurificationStationBE.this.fuel_conversion_progress;
+                    case 5 -> PurificationStationBE.this.getPurificationTime();
+                    case 6 -> PurificationStationBE.this.modifier_type.ordinal();
                     case 7 -> ModifierUtils.packColor(ModifierUtils.convertToColors(currentModifierColor));
-                    case 8 -> PurificationStationBlockEntity.this.currentModifierColor.ordinal();
+                    case 8 -> PurificationStationBE.this.currentModifierColor.ordinal();
                     default -> 0;
                 };
             }
@@ -125,15 +125,15 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
             @Override
             public void set(int index, int value) {
                 switch (index) {
-                    case 0 -> PurificationStationBlockEntity.this.progress = value;
-                    case 1 -> PurificationStationBlockEntity.this.fuel = value;
-                    case 2 -> PurificationStationBlockEntity.this.pressure = value;
-                    case 3 -> PurificationStationBlockEntity.this.modifier_amount = value;
-                    case 4 -> PurificationStationBlockEntity.this.fuel_conversion_progress = value;
-                    case 5 -> PurificationStationBlockEntity.this.maxProgress = value;
-                    case 6 -> PurificationStationBlockEntity.this.modifier_type = ModifierUtils.ModifierType.values()[value];
+                    case 0 -> PurificationStationBE.this.progress = value;
+                    case 1 -> PurificationStationBE.this.fuel = value;
+                    case 2 -> PurificationStationBE.this.pressure = value;
+                    case 3 -> PurificationStationBE.this.modifier_amount = value;
+                    case 4 -> PurificationStationBE.this.fuel_conversion_progress = value;
+                    case 5 -> PurificationStationBE.this.maxProgress = value;
+                    case 6 -> PurificationStationBE.this.modifier_type = ModifierUtils.ModifierType.values()[value];
                     // MAKE ID!!!!!!!!!11111
-                    case 8 -> PurificationStationBlockEntity.this.currentModifierColor = DyeColor.values()[value];
+                    case 8 -> PurificationStationBE.this.currentModifierColor = DyeColor.values()[value];
                 }
             }
 
@@ -147,7 +147,7 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
     @OnlyIn(Dist.CLIENT)
     private PurificationStationSoundInstance soundInstance;
 
-    public void clientTick(Level level, BlockPos pos, BlockState state, PurificationStationBlockEntity be) {
+    public void clientTick(Level level, BlockPos pos, BlockState state, PurificationStationBE be) {
         if (isConverting()) {
             if (be.soundInstance == null || be.soundInstance.isStopped()) {
                 be.soundInstance = new PurificationStationSoundInstance(be, ModSounds.COMPRESSOR_WORK.get());
@@ -156,7 +156,7 @@ public class PurificationStationBlockEntity extends BlockEntity implements MenuP
         }
     }
 
-    public void tick(Level level, BlockPos pos, BlockState state, PurificationStationBlockEntity blockEntity) {
+    public void tick(Level level, BlockPos pos, BlockState state, PurificationStationBE blockEntity) {
         if (level.isClientSide) return;
         boolean changed = false;
 

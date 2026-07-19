@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 import net.whiteman.biosanity.world.neoplasm.resource.ResourceType;
-import net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBE;
 import net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBlock;
 import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
 import net.whiteman.biosanity.client.resources.model.ModelProperties;
@@ -29,7 +29,7 @@ import java.util.Objects;
 import static net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBlock.HAS_NUTRIENT;
 import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConstants.DIRECTIONS;
 
-public class NeoplasmRotBlockEntity extends BlockEntity {
+public class NeoplasmRotBE extends BlockEntity {
     public static final int TICKS_TO_TRANSFER_NUTRIENT = 15;
 
     private BlockState originalState = Blocks.AIR.defaultBlockState();
@@ -38,11 +38,11 @@ public class NeoplasmRotBlockEntity extends BlockEntity {
     private int heldResourceLevel = 0;
     private int transferCooldown = 0;
 
-    public NeoplasmRotBlockEntity(BlockPos pos, BlockState state) {
+    public NeoplasmRotBE(BlockPos pos, BlockState state) {
         super(ModBlockEntities.NEOPLASM_ROT_BE.get(), pos, state);
     }
 
-    public void tick(Level level, BlockPos pos, BlockState state, NeoplasmRotBlockEntity be) {
+    public void tick(Level level, BlockPos pos, BlockState state, NeoplasmRotBE be) {
         if (!state.getValue(HAS_NUTRIENT) || be.heldResourceType == ResourceType.NONE) return;
 
         // Transfer countdown
@@ -77,7 +77,7 @@ public class NeoplasmRotBlockEntity extends BlockEntity {
                 // Target vein
                 level.setBlock(targetPos, targetState.setValue(NeoplasmVeinBlock.HAS_NUTRIENT, true), Block.UPDATE_ALL);
 
-                if (targetBE instanceof NeoplasmVeinBlockEntity veinBE) {
+                if (targetBE instanceof NeoplasmVeinBE veinBE) {
                     // Target vein
                     veinBE.setData(this.heldResourceType, this.heldResourceLevel);
                     veinBE.setNutrientTransferCooldown(TICKS_TO_TRANSFER_NUTRIENT);
@@ -101,7 +101,7 @@ public class NeoplasmRotBlockEntity extends BlockEntity {
                     // Target rot
                     level.setBlock(targetPos, targetState.setValue(HAS_NUTRIENT, true), Block.UPDATE_ALL);
 
-                    if (targetBE instanceof NeoplasmRotBlockEntity nextRotBE) {
+                    if (targetBE instanceof NeoplasmRotBE nextRotBE) {
                         // Target rot
                         nextRotBE.setData(this.heldResourceType, this.heldResourceLevel);
                         nextRotBE.transferCooldown = TICKS_TO_TRANSFER_NUTRIENT;

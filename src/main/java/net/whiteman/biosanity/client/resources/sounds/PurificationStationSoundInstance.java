@@ -6,13 +6,13 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.whiteman.biosanity.world.level.block.entity.PurificationStationBlockEntity;
+import net.whiteman.biosanity.world.level.block.entity.PurificationStationBE;
 
 @OnlyIn(Dist.CLIENT)
 public class PurificationStationSoundInstance extends AbstractTickableSoundInstance {
-    private final PurificationStationBlockEntity blockEntity;
+    private final PurificationStationBE blockEntity;
 
-    public PurificationStationSoundInstance(PurificationStationBlockEntity tile, SoundEvent sound) {
+    public PurificationStationSoundInstance(PurificationStationBE tile, SoundEvent sound) {
         super(sound, SoundSource.BLOCKS, SoundInstance.createUnseededRandom());
         this.blockEntity = tile;
         this.x = tile.getBlockPos().getX() + 0.5f;

@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
-import net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.rot.NeoplasmRotBE;
 
 import java.util.function.Supplier;
 
@@ -32,7 +32,7 @@ public class SyncNeoplasmRotPacket {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             Level level = Minecraft.getInstance().level;
-            if (level != null && level.getBlockEntity(msg.pos) instanceof NeoplasmRotBlockEntity be) {
+            if (level != null && level.getBlockEntity(msg.pos) instanceof NeoplasmRotBE be) {
                 be.load(msg.nbt);
                 be.requestModelDataUpdate();
                 level.sendBlockUpdated(msg.pos, be.getBlockState(), be.getBlockState(), 3);

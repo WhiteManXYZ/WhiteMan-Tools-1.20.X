@@ -26,7 +26,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
-import net.whiteman.biosanity.world.level.block.entity.PurificationStationBlockEntity;
+import net.whiteman.biosanity.world.level.block.entity.PurificationStationBE;
 import net.whiteman.biosanity.client.resources.sounds.ModSounds;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,7 +72,7 @@ public class PurificationStationBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
-        return new PurificationStationBlockEntity(pPos, pState);
+        return new PurificationStationBE(pPos, pState);
     }
 
     @Override
@@ -80,8 +80,8 @@ public class PurificationStationBlock extends BaseEntityBlock {
         // Drop loot from block on destroy e.g.
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof PurificationStationBlockEntity) {
-                ((PurificationStationBlockEntity) blockEntity).drops();
+            if (blockEntity instanceof PurificationStationBE) {
+                ((PurificationStationBE) blockEntity).drops();
             }
         }
 
@@ -93,8 +93,8 @@ public class PurificationStationBlock extends BaseEntityBlock {
         // Menu open on use
         if (!pLevel.isClientSide()) {
             BlockEntity entity = pLevel.getBlockEntity(pPos);
-            if(entity instanceof PurificationStationBlockEntity) {
-                NetworkHooks.openScreen(((ServerPlayer)pPlayer), (PurificationStationBlockEntity)entity, pPos);
+            if(entity instanceof PurificationStationBE) {
+                NetworkHooks.openScreen(((ServerPlayer)pPlayer), (PurificationStationBE)entity, pPos);
             } else {
                 throw new IllegalStateException("Our Container provider is missing!");
             }

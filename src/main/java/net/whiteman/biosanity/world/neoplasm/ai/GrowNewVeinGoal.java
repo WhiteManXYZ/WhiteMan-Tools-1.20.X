@@ -3,7 +3,7 @@ package net.whiteman.biosanity.world.neoplasm.ai;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 import net.whiteman.biosanity.world.neoplasm.core.hivemind.AlertLevel;
 import net.whiteman.biosanity.world.neoplasm.core.hivemind.Hivemind;
 
@@ -16,7 +16,7 @@ public class GrowNewVeinGoal extends AbstractGoal {
     private final int biomassCost = 2;
     private final int staminaCost = 5;
 
-    public GrowNewVeinGoal(NeoplasmCoreBlockEntity core, double baseWeight, int goalCooldown) {
+    public GrowNewVeinGoal(NeoplasmCoreBE core, double baseWeight, int goalCooldown) {
         super(core, baseWeight);
         this.goalCooldown = goalCooldown;
     }

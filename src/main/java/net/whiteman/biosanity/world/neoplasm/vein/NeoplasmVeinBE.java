@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
-import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 import net.whiteman.biosanity.world.neoplasm.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,7 @@ import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConfig.TICKS_
 import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConstants.DIRECTIONS;
 import static net.whiteman.biosanity.world.neoplasm.vein.NeoplasmVeinBlock.*;
 
-public class NeoplasmVeinBlockEntity extends BlockEntity {
+public class NeoplasmVeinBE extends BlockEntity {
     public Direction growthDirection = Direction.DOWN;
     public Direction parentDirection = Direction.DOWN;
     public Direction childDirection = Direction.DOWN;
@@ -31,11 +31,11 @@ public class NeoplasmVeinBlockEntity extends BlockEntity {
     private ImpulsePacket activeImpulse = null;
     private int impulseCooldown = 0;
 
-    public NeoplasmVeinBlockEntity(BlockPos pPos, BlockState pBlockState) {
+    public NeoplasmVeinBE(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.NEOPLASM_VEIN_BE.get(), pPos, pBlockState);
     }
 
-    public void tick(Level level, BlockPos pos, BlockState state, NeoplasmVeinBlockEntity be) {
+    public void tick(Level level, BlockPos pos, BlockState state, NeoplasmVeinBE be) {
         if (state.getValue(HAS_NUTRIENT) || be.heldResourceType != ResourceType.NONE) {
             // Transfer countdown
             if (be.transferCooldown > 0) {
@@ -79,7 +79,7 @@ public class NeoplasmVeinBlockEntity extends BlockEntity {
             // Target vein
             level.setBlock(targetPos, targetState.setValue(HAS_NUTRIENT, true), Block.UPDATE_ALL);
 
-            if (targetEntity instanceof NeoplasmVeinBlockEntity blockEntity) {
+            if (targetEntity instanceof NeoplasmVeinBE blockEntity) {
                 // Target vein
                 blockEntity.setData(this.heldResourceType, this.heldResourceLevel);
                 blockEntity.transferCooldown = TICKS_TO_TRANSFER_NUTRIENT;
@@ -105,7 +105,7 @@ public class NeoplasmVeinBlockEntity extends BlockEntity {
         else for (Direction dir : DIRECTIONS) {
             BlockEntity targetCoreEntity = level.getBlockEntity(pos.relative(dir));
 
-            if (targetCoreEntity instanceof NeoplasmCoreBlockEntity core) {
+            if (targetCoreEntity instanceof NeoplasmCoreBE core) {
                 // Target core
                 boolean isDecomposed = core.decomposeResource(this.heldResourceType, this.heldResourceLevel);
                 // Current vein
@@ -148,7 +148,7 @@ public class NeoplasmVeinBlockEntity extends BlockEntity {
         BlockEntity targetEntity = level.getBlockEntity(targetPos);
 
         if (targetState.getBlock() instanceof NeoplasmVeinBlock block) {
-            if (targetEntity instanceof NeoplasmVeinBlockEntity blockEntity) {
+            if (targetEntity instanceof NeoplasmVeinBE blockEntity) {
 
                 blockEntity.setImpulsePacket(activeImpulse);
                 blockEntity.setImpulseSendingCooldown(TICKS_TO_SEND_IMPULSE);
@@ -168,7 +168,7 @@ public class NeoplasmVeinBlockEntity extends BlockEntity {
             }
         }
         else {
-            if (level.getBlockEntity(activeImpulse.sourceCore()) instanceof NeoplasmCoreBlockEntity blockEntity) {
+            if (level.getBlockEntity(activeImpulse.sourceCore()) instanceof NeoplasmCoreBE blockEntity) {
                 blockEntity.receiveFailedImpulse(activeImpulse);
             } else {
                 System.out.printf("Impulse %s lost in position: %s and don't returned result to core!\n", activeImpulse, targetPos);
@@ -193,7 +193,7 @@ public class NeoplasmVeinBlockEntity extends BlockEntity {
                 case SCAN -> System.out.println("SCAN");
             }
         }
-        if (level.getBlockEntity(packet.sourceCore()) instanceof NeoplasmCoreBlockEntity blockEntity) {
+        if (level.getBlockEntity(packet.sourceCore()) instanceof NeoplasmCoreBE blockEntity) {
             blockEntity.receiveImpulseSuccess(packet);
         }
 

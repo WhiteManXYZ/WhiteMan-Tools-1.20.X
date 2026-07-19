@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.DyeColor;
 import net.whiteman.biosanity.BiosanityMod;
 import net.whiteman.biosanity.world.inventory.PurificationStationMenu;
-import net.whiteman.biosanity.world.level.block.entity.PurificationStationBlockEntity;
+import net.whiteman.biosanity.world.level.block.entity.PurificationStationBE;
 import net.whiteman.biosanity.world.util.ColoredItemsRegistry;
 import net.whiteman.biosanity.world.util.ModifierUtils;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +72,7 @@ public class PurificationStationScreen extends AbstractContainerScreen<Purificat
     private void renderPressureTooltip(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
         if (isHovering(153, 17, 15, 15, mouseX, mouseY)) {
             int currentPressure = this.menu.getPressure();
-            int maxPressure = PurificationStationBlockEntity.MAX_PRESSURE;
+            int maxPressure = PurificationStationBE.MAX_PRESSURE;
             List<Component> tooltip = new ArrayList<>();
 
             tooltip.add(Component.translatable("tooltip.biosanity.purification_station_block.pressure_label")
@@ -135,7 +135,7 @@ public class PurificationStationScreen extends AbstractContainerScreen<Purificat
 
     private void renderFuelBar(GuiGraphics guiGraphics, int x, int y) {
         int fuel = this.menu.getFuel();
-        int fuel_max_count = PurificationStationBlockEntity.MAX_FUEL_COUNT;
+        int fuel_max_count = PurificationStationBE.MAX_FUEL_COUNT;
         int barWidth = Mth.clamp((18 * fuel + fuel_max_count - 1) / fuel_max_count, 0, 18);
         if (barWidth > 0) {
             guiGraphics.blit(PURIFICATION_STATION_TEXTURE, x + 50, y + 64, 176, 17, barWidth, 4);

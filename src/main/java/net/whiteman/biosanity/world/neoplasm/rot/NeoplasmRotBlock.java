@@ -128,7 +128,7 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
     @Override
     public void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
         if (state.getValue(HAS_NUTRIENT)) {
-            if (level.getBlockEntity(pos) instanceof NeoplasmRotBlockEntity blockEntity) {
+            if (level.getBlockEntity(pos) instanceof NeoplasmRotBE blockEntity) {
                 blockEntity.tick(level, pos, state, blockEntity);
             }
         }
@@ -158,13 +158,13 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
                         .setValue(RESOURCE_LEVEL, info.level())
                         .setValue(DISTANCE, targetDist), Block.UPDATE_CLIENTS);
 
-                if (level.getBlockEntity(targetPos) instanceof NeoplasmRotBlockEntity be) {
+                if (level.getBlockEntity(targetPos) instanceof NeoplasmRotBE be) {
                     be.setOriginalState(targetState);
                     be.setChanged();
                     // Sync a little later for prevent desynchronization
                     var server = level.getServer();
                     server.tell(new TickTask(server.getTickCount(), () -> {
-                        if (level.isLoaded(targetPos) && level.getBlockEntity(targetPos) instanceof NeoplasmRotBlockEntity actualBe) {
+                        if (level.isLoaded(targetPos) && level.getBlockEntity(targetPos) instanceof NeoplasmRotBE actualBe) {
                             if (!actualBe.isRemoved()) {
                                 ModMessages.sendToClientsTracking(new SyncNeoplasmRotPacket(targetPos, actualBe.saveWithFullMetadata()), actualBe);
                             }
@@ -179,7 +179,7 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
 
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new NeoplasmRotBlockEntity(pos, state);
+        return new NeoplasmRotBE(pos, state);
     }
 
     @Override
@@ -187,7 +187,7 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
         // Rotting over time by suck resources from block itself
         // and sending to veins
         if (!state.getValue(HAS_NUTRIENT)) {
-            if (level.getBlockEntity(pos) instanceof NeoplasmRotBlockEntity be) {
+            if (level.getBlockEntity(pos) instanceof NeoplasmRotBE be) {
                 int currentStage = be.getInfectionStage();
                 if (currentStage < MAX_STAGES - 1) {
                     be.setInfectionStage(currentStage + 1);
@@ -211,7 +211,7 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
 
     @Override
     public void playerDestroy(@NotNull Level level, @NotNull Player player, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable BlockEntity pBlockEntity, @NotNull ItemStack pTool) {
-        if (pBlockEntity instanceof NeoplasmRotBlockEntity be && level instanceof ServerLevel) {
+        if (pBlockEntity instanceof NeoplasmRotBE be && level instanceof ServerLevel) {
             BlockState original = be.getOriginalState();
 
             if (!player.isCreative()) {
@@ -241,7 +241,7 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
 
     @Override
     public float getDestroyProgress(@NotNull BlockState state, @NotNull Player player, BlockGetter level, @NotNull BlockPos pos) {
-        if (level.getBlockEntity(pos) instanceof NeoplasmRotBlockEntity be) {
+        if (level.getBlockEntity(pos) instanceof NeoplasmRotBE be) {
             // Better copy destroy speed parameters from original
             BlockState original = be.getOriginalState();
             float originalProgress = original.getDestroyProgress(player, level, pos);
@@ -258,7 +258,7 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
 
     @Override
     public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-        if (level.getBlockEntity(pos) instanceof NeoplasmRotBlockEntity be) {
+        if (level.getBlockEntity(pos) instanceof NeoplasmRotBE be) {
             // Better copy flammability from original
             BlockState original = be.getOriginalState();
             int originalFlammability = original.getFlammability(level, pos, direction);
@@ -273,7 +273,7 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
 
     @Override
     public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-        if (level.getBlockEntity(pos) instanceof NeoplasmRotBlockEntity be) {
+        if (level.getBlockEntity(pos) instanceof NeoplasmRotBE be) {
             // Better copy fire spread speed from original
             BlockState original = be.getOriginalState();
             int originalFireSpreadSpeed = original.getFlammability(level, pos, direction);
@@ -288,7 +288,7 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
 
     @Override
     public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
-        if (level.getBlockEntity(pos) instanceof NeoplasmRotBlockEntity be) {
+        if (level.getBlockEntity(pos) instanceof NeoplasmRotBE be) {
             // Better copy explosion resistance from original
             BlockState original = be.getOriginalState();
             float originalResistance = original.getExplosionResistance(level, pos, explosion);
@@ -300,7 +300,7 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
 
     @Override
     public SoundType getSoundType(BlockState state, LevelReader level, BlockPos pos, @Nullable Entity entity) {
-        if (level.getBlockEntity(pos) instanceof NeoplasmRotBlockEntity be) {
+        if (level.getBlockEntity(pos) instanceof NeoplasmRotBE be) {
             // Also on first stage better copy original sounds
             // because infection is not that strong
             if (be.getInfectionStage() < 1 && !be.getOriginalState().isAir()) {
@@ -312,7 +312,7 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
 
     @Override
     public void fallOn(@NotNull Level level, @NotNull BlockState state, @NotNull BlockPos pos, @NotNull Entity entity, float fallDistance) {
-        if (level.getBlockEntity(pos) instanceof NeoplasmRotBlockEntity be) {
+        if (level.getBlockEntity(pos) instanceof NeoplasmRotBE be) {
             // We reduce damage depending on the stage of infection
             super.fallOn(level, state, pos, entity, fallDistance * be.getMultiplier(FALL_DAMAGE_MULTIPLIERS));
         } else {

@@ -1,10 +1,10 @@
 package net.whiteman.biosanity.world.neoplasm.ai;
 
-import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 import net.whiteman.biosanity.world.neoplasm.core.hivemind.Hivemind;
 
 public interface IHivemindGoal {
-    NeoplasmCoreBlockEntity getCore();
+    NeoplasmCoreBE getCore();
     default Hivemind getHivemind() {
         return getCore().getHivemind();
     }

@@ -3,7 +3,7 @@ package net.whiteman.biosanity.world.neoplasm.ai;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 import net.whiteman.biosanity.world.neoplasm.core.hivemind.Hivemind;
 import net.whiteman.biosanity.world.neoplasm.vein.ImpulseType;
 
@@ -17,7 +17,7 @@ public class GrowVeinGoal extends AbstractGoal {
 
     private List<BlockPos> connectedVeins;
 
-    public GrowVeinGoal(NeoplasmCoreBlockEntity core, double baseWeight, int goalCooldown) {
+    public GrowVeinGoal(NeoplasmCoreBE core, double baseWeight, int goalCooldown) {
         super(core, baseWeight);
         this.goalCooldown = goalCooldown;
     }

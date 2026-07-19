@@ -7,7 +7,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.whiteman.biosanity.world.neoplasm.ai.GoalRegistry;
 import net.whiteman.biosanity.world.neoplasm.ai.IHivemindGoal;
-import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -72,7 +72,7 @@ public class Hivemind {
 
         // Checking each member goals, to prevent taking non-stackable goal
         for (BlockPos pos : activeMembers) {
-            if (level.getBlockEntity(pos) instanceof NeoplasmCoreBlockEntity core) {
+            if (level.getBlockEntity(pos) instanceof NeoplasmCoreBE core) {
                 IHivemindGoal current = core.getCurrentGoal();
                 if (current != null && !current.isStackable()) {
                     takenNonStackable.add(current.getClass());
@@ -82,7 +82,7 @@ public class Hivemind {
 
         // We distribute new tasks to those who are free or who need to change their goals
         for (BlockPos pos : activeMembers) {
-            if (level.getBlockEntity(pos) instanceof NeoplasmCoreBlockEntity core) {
+            if (level.getBlockEntity(pos) instanceof NeoplasmCoreBE core) {
 
                 // We get a list of goals sorted by weight (Utility) from highest to lowest
                 List<IHivemindGoal> candidates = GoalRegistry.createGoalsFor(core);

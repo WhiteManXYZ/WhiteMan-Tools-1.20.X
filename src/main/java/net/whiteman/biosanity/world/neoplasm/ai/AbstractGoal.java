@@ -1,22 +1,22 @@
 package net.whiteman.biosanity.world.neoplasm.ai;
 
 import net.minecraft.util.RandomSource;
-import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBlockEntity;
+import net.whiteman.biosanity.world.neoplasm.core.NeoplasmCoreBE;
 
 import static net.whiteman.biosanity.world.neoplasm.common.NeoplasmConfig.*;
 
 public abstract class AbstractGoal implements IHivemindGoal {
-    protected final NeoplasmCoreBlockEntity core;
+    protected final NeoplasmCoreBE core;
     protected final double baseWeight;
     protected int timer;
     protected int currentCooldown;
 
-    public AbstractGoal(NeoplasmCoreBlockEntity core, double baseWeight) {
+    public AbstractGoal(NeoplasmCoreBE core, double baseWeight) {
         this.core = core;
         this.baseWeight = baseWeight;
     }
 
-    @Override public NeoplasmCoreBlockEntity getCore() { return core; }
+    @Override public NeoplasmCoreBE getCore() { return core; }
 
     @Override public double getBaseWeight() { return baseWeight; }
 

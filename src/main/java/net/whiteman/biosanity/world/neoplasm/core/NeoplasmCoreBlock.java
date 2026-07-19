@@ -23,7 +23,7 @@ public class NeoplasmCoreBlock extends BaseEntityBlock implements INeoplasmNode 
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
-        return new NeoplasmCoreBlockEntity(pPos, pState);
+        return new NeoplasmCoreBE(pPos, pState);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class NeoplasmCoreBlock extends BaseEntityBlock implements INeoplasmNode 
     @Override
     public void onPlace(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean isMoving) {
         if (!level.isClientSide && !state.is(oldState.getBlock())) {
-            if (level.getBlockEntity(pos) instanceof NeoplasmCoreBlockEntity core) {
+            if (level.getBlockEntity(pos) instanceof NeoplasmCoreBE core) {
                 HivemindManager manager = HivemindManager.get(level);
 
                 List<BlockPos> neighbors = core.findNeighborCores();
@@ -60,7 +60,7 @@ public class NeoplasmCoreBlock extends BaseEntityBlock implements INeoplasmNode 
     public void onRemove(BlockState state, @NotNull Level level, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
             BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof NeoplasmCoreBlockEntity core) {
+            if (be instanceof NeoplasmCoreBE core) {
                 HivemindManager data = HivemindManager.get(level);
                 Hivemind hive = data.getHivemindById(core.getHivemindId());
 
