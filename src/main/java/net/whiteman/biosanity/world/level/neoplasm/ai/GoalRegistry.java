@@ -1,9 +1,6 @@
 package net.whiteman.biosanity.world.level.neoplasm.ai;
 
-import net.whiteman.biosanity.world.level.neoplasm.ai.goals.ExpandHivemind;
-import net.whiteman.biosanity.world.level.neoplasm.ai.goals.GrowNewVein;
-import net.whiteman.biosanity.world.level.neoplasm.ai.goals.GrowVein;
-import net.whiteman.biosanity.world.level.neoplasm.ai.goals.Idle;
+import net.whiteman.biosanity.world.level.neoplasm.ai.goals.*;
 import net.whiteman.biosanity.world.level.block.entity.NeoplasmCoreBE;
 
 import java.util.ArrayList;
@@ -20,6 +17,7 @@ public class GoalRegistry {
         register(core -> new GrowVein(core, 20d, 140));
         register(core -> new GrowNewVein(core, 25d, 200));
         register(core -> new ExpandHivemind(core, 20d, 420));
+        register(core -> new ScanBlocks(core, 20d, 140));
 
         // Idle
         register(core -> new Idle(core, 10d, 20));
