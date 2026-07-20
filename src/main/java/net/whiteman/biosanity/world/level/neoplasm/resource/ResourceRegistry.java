@@ -106,6 +106,19 @@ public class ResourceRegistry {
         return false;
     }
 
+    public static boolean isResource(Block block) {
+        if (DEVOUR_MAP.containsKey(block)) return true;
+
+        BlockState state = block.defaultBlockState();
+        for (Map.Entry<TagKey<Block>, ResourceTypeEntry> entry : DEVOUR_MAP_TAGS.entrySet()) {
+            if (state.is(entry.getKey())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static ResourceTypeEntry getResourceInfo(Block block) {
         if (DEVOUR_MAP.containsKey(block)) {
             return DEVOUR_MAP.get(block);
