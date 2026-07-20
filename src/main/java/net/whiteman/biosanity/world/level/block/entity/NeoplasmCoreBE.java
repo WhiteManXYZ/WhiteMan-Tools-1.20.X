@@ -22,6 +22,7 @@ import net.whiteman.biosanity.world.level.neoplasm.resource.ResourceType;
 import net.whiteman.biosanity.world.level.neoplasm.vein.ImpulsePacket;
 import net.whiteman.biosanity.world.level.neoplasm.vein.ImpulseType;
 import net.whiteman.biosanity.world.level.block.NeoplasmVeinBlock;
+import net.whiteman.biosanity.world.level.neoplasm.vein.ScannedResource;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
@@ -46,6 +47,10 @@ public class NeoplasmCoreBE extends BlockEntity {
     private int nextImpulseId = 0;
     private record PendingImpulse(ImpulsePacket packet, long sentTime) {}
     private final Map<Integer, PendingImpulse> pendingImpulses = new HashMap<>();
+
+    /** Memory for scanned blocks, so we can store this data
+     * and use it later (for growing and absorbing found resource eg) */
+    private final Map<Direction, List<ScannedResource>> blockScanMemory = new EnumMap<>(Direction.class);
 
     public NeoplasmCoreBE(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.NEOPLASM_CORE_BE.get(), pPos, pBlockState);
@@ -154,7 +159,7 @@ public class NeoplasmCoreBE extends BlockEntity {
             int id = this.nextImpulseId;
 
             pendingImpulses.remove(id);
-            ImpulsePacket packet = new ImpulsePacket(type, level, this.worldPosition, id);
+            ImpulsePacket packet = new ImpulsePacket(type, level, this.worldPosition, dir, id);
 
             be.setImpulsePacket(packet);
 
@@ -177,6 +182,10 @@ public class NeoplasmCoreBE extends BlockEntity {
         } else {
             System.out.println("Received an outdated or ghost packet: " + id);
         }
+    }
+
+    public void receiveScanResult(Direction sendDirection, List<ScannedResource> blocks) {
+        blockScanMemory.put(sendDirection, blocks);
     }
 
     public void receiveFailedImpulse(ImpulsePacket packet) {
