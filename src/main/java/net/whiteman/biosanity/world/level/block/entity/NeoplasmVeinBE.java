@@ -13,7 +13,10 @@ import net.whiteman.biosanity.world.level.neoplasm.resource.ResourceType;
 import net.whiteman.biosanity.world.level.neoplasm.vein.ImpulsePacket;
 import net.whiteman.biosanity.world.level.neoplasm.vein.ImpulseType;
 import net.whiteman.biosanity.world.level.block.NeoplasmVeinBlock;
+import net.whiteman.biosanity.world.level.neoplasm.vein.ScannedResource;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig.TICKS_TO_SEND_IMPULSE;
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig.TICKS_TO_TRANSFER_NUTRIENT;
@@ -183,6 +186,7 @@ public class NeoplasmVeinBE extends BlockEntity {
     private void acceptImpulse(ImpulsePacket packet) {
         if (level == null || level.isClientSide || packet == null) return;
         BlockState state = level.getBlockState(worldPosition);
+        BlockEntity sourceCore = level.getBlockEntity(packet.sourceCore());
 
         if (state.getBlock() instanceof NeoplasmVeinBlock veinBlock) {
             switch (packet.type()) {
@@ -191,10 +195,17 @@ public class NeoplasmVeinBE extends BlockEntity {
                         veinBlock.performGrowth(level, worldPosition, state, packet);
                     }
                 }
-                case SCAN -> System.out.println("SCAN");
+                case SCAN -> {
+                    List<ScannedResource> blocks = veinBlock.scanNearbyBlocks(level, worldPosition, 2);
+
+                    if (!blocks.isEmpty() && sourceCore instanceof NeoplasmCoreBE blockEntity) {
+                        blockEntity.receiveScanResult(packet.sendDirection(), blocks);
+                    }
+                }
             }
         }
-        if (level.getBlockEntity(packet.sourceCore()) instanceof NeoplasmCoreBE blockEntity) {
+
+        if (sourceCore instanceof NeoplasmCoreBE blockEntity) {
             blockEntity.receiveImpulseSuccess(packet);
         }
 

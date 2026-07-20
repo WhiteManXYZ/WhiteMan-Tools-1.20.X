@@ -26,6 +26,7 @@ import net.whiteman.biosanity.world.level.neoplasm.hivemind.HivemindLevel;
 import net.whiteman.biosanity.world.level.block.entity.NeoplasmRotBE;
 import net.whiteman.biosanity.world.level.neoplasm.resource.ResourceRegistry;
 import net.whiteman.biosanity.world.level.neoplasm.vein.ImpulsePacket;
+import net.whiteman.biosanity.world.level.neoplasm.vein.ScannedResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -173,9 +174,10 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
 
     /** Scans all helpful blocks in range,
      * @param range must be not so big (1-8)
-     * @return a map with all find blocks */
-    public Map<BlockPos, Block> scanNearbyBlocks(Level level, BlockPos center, int range) {
-        Map<BlockPos, Block> found = new HashMap<>();
+     * @return list with all find blocks */
+    public List<ScannedResource> scanNearbyBlocks(Level level, BlockPos center, int range) {
+        List<ScannedResource> found = new LinkedList<>();
+        long time = level.getGameTime();
 
         for (BlockPos pos : BlockPos.betweenClosed(
                 center.offset(-range, -range, -range),
@@ -186,7 +188,10 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
             BlockState state = level.getBlockState(pos);
 
             if (ResourceRegistry.isResource(state.getBlock())) {
-                found.put(pos.immutable(), state.getBlock());
+                found.add(new ScannedResource(pos, state.getBlock(),
+                        (int) Math.sqrt(center.distSqr(pos)),
+                        time,
+                        ResourceRegistry.getResourceInfo(state.getBlock()).resourceType()));
             }
         }
 
