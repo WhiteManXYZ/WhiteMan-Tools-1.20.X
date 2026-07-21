@@ -178,14 +178,15 @@ public class NeoplasmCoreBE extends BlockEntity {
 
         if (pendingImpulses.containsKey(id)) {
             pendingImpulses.remove(id);
-            System.out.printf("Packet successfully delivered! core pos: %s\n", worldPosition);
+            System.out.printf("Packet %s successfully delivered! core pos: %s\n",packet.type(), worldPosition);
         } else {
             System.out.println("Received an outdated or ghost packet: " + id);
         }
     }
 
-    public void receiveScanResult(Direction sendDirection, List<ScannedResource> blocks) {
-        blockScanMemory.put(sendDirection, blocks);
+    public void receiveScanResult(Direction sendDirection, NeoplasmVeinBlock.Scan scan) {
+        blockScanMemory.put(sendDirection, scan.scannedResources());
+        lastScanTime.put(sendDirection, scan.scanTime());
     }
 
     public void receiveFailedImpulse(ImpulsePacket packet) {

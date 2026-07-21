@@ -172,10 +172,11 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
         }
     }
 
+    public record Scan(List<ScannedResource> scannedResources, long scanTime) {}
     /** Scans all helpful blocks in range,
      * @param range must be not so big (1-8)
      * @return list with all find blocks */
-    public List<ScannedResource> scanNearbyBlocks(Level level, BlockPos center, int range) {
+    public Scan scanNearbyBlocks(Level level, BlockPos center, int range) {
         List<ScannedResource> found = new LinkedList<>();
         long time = level.getGameTime();
 
@@ -195,7 +196,7 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
             }
         }
 
-        return found;
+        return new Scan(found, time);
     }
 
     //region Conditions

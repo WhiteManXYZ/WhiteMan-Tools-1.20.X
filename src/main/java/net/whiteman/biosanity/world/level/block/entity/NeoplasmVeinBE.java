@@ -13,10 +13,7 @@ import net.whiteman.biosanity.world.level.neoplasm.resource.ResourceType;
 import net.whiteman.biosanity.world.level.neoplasm.vein.ImpulsePacket;
 import net.whiteman.biosanity.world.level.neoplasm.vein.ImpulseType;
 import net.whiteman.biosanity.world.level.block.NeoplasmVeinBlock;
-import net.whiteman.biosanity.world.level.neoplasm.vein.ScannedResource;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig.TICKS_TO_SEND_IMPULSE;
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig.TICKS_TO_TRANSFER_NUTRIENT;
@@ -195,12 +192,11 @@ public class NeoplasmVeinBE extends BlockEntity {
                         veinBlock.performGrowth(level, worldPosition, state, packet);
                     }
                 }
-                case SCAN -> {
-                    List<ScannedResource> blocks = veinBlock.scanNearbyBlocks(level, worldPosition, 2);
                 case SCAN_BLOCKS -> {
+                    Scan scan = veinBlock.scanNearbyBlocks(level, worldPosition, 2);
 
-                    if (!blocks.isEmpty() && sourceCore instanceof NeoplasmCoreBE blockEntity) {
-                        blockEntity.receiveScanResult(packet.sendDirection(), blocks);
+                    if (sourceCore instanceof NeoplasmCoreBE blockEntity) {
+                        blockEntity.receiveScanResult(packet.sendDirection(), scan);
                     }
                 }
             }
