@@ -120,8 +120,8 @@ public class Hivemind {
         if (current == null) return true;
         if (current.getClass() == next.getClass()) return false;
 
-        // Switching only if new goal is more important than current
-        return next.evaluateUtility() > (current.evaluateUtility() + 5d);
+        // Switching only if new goal is a bit important than current
+        return next.evaluateUtility() > (current.evaluateUtility() + 2d);
     }
 
     private void setActionCooldown(Level level) {
