@@ -44,6 +44,10 @@ public class NeoplasmConfig {
     public static final int CORE_GOAL_CONDITION_THRESHOLD = 10;
     public static final int CORE_GOAL_CONDITION_OFFSET = CORE_GOAL_CONDITION_THRESHOLD / 2;
 
+    // Scan memory params
+    /** Determines how old scan can be (in ticks) */
+    public static final long CORE_SCAN_MAX_AGE = 200;
+
     //endregion
 
     //region Vein
