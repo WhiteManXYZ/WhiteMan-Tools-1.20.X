@@ -1,6 +1,5 @@
 package net.whiteman.biosanity.world.level.neoplasm.ai.goals;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.whiteman.biosanity.world.level.neoplasm.ai.AbstractGoal;
@@ -16,7 +15,7 @@ public class GrowVein extends AbstractGoal {
     private final int biomassCost = 1;
     private final int staminaCost = 3;
 
-    private List<BlockPos> connectedVeins;
+    private List<Direction> connectedVeins;
 
     public GrowVein(NeoplasmCoreBE core, double baseWeight, int goalCooldown) {
         super(core, baseWeight);
@@ -74,18 +73,11 @@ public class GrowVein extends AbstractGoal {
 
         if (timer >= currentCooldown) {
             // TODO dir calculation
-            BlockPos posA = core.getBlockPos();
-            BlockPos posB = connectedVeins.get(level.random.nextInt(connectedVeins.size()));
+            Direction direction = connectedVeins.get(level.random.nextInt(connectedVeins.size()));
 
-            int dx = posB.getX() - posA.getX();
-            int dy = posB.getY() - posA.getY();
-            int dz = posB.getZ() - posA.getZ();
+            if (direction == null) return;
 
-            Direction dir = Direction.fromDelta(dx, dy, dz);
-
-            if (dir == null) return;
-
-            if (core.sendImpulse(ImpulseType.GROW, hivemind.getLevel(), dir)) {
+            if (core.sendImpulse(ImpulseType.GROW, hivemind.getLevel(), direction)) {
                 hivemind.modifyBiomass(-biomassCost);
                 hivemind.modifyStamina(-staminaCost);
                 resetTimer(goalCooldown);

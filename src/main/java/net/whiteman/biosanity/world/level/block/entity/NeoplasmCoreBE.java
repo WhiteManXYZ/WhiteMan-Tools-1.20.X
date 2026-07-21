@@ -244,16 +244,16 @@ public class NeoplasmCoreBE extends BlockEntity {
         return cores;
     }
 
-    public @Nullable List<BlockPos> findNeighborVeins() {
+    public @Nullable List<Direction> findNeighborVeins() {
         if (this.level == null || level.isClientSide) return null;
-        List<BlockPos> veins = new ArrayList<>();
+        List<Direction> veinsDirections = new ArrayList<>();
         for (Direction dir : DIRECTIONS) {
             BlockPos neighborPos = this.worldPosition.relative(dir);
             if (level.getBlockState(neighborPos).getBlock() instanceof NeoplasmVeinBlock) {
-                veins.add(neighborPos);
+                veinsDirections.add(dir);
             }
         }
-        return veins;
+        return veinsDirections;
     }
     //endregion
 

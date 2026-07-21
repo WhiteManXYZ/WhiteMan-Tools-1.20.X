@@ -53,7 +53,7 @@ public class GrowNewVein extends AbstractGoal {
         }
 
         // Excess factor, if core has enough veins near, decrease growth weight
-        List<BlockPos> nearbyVeins = core.findNeighborVeins();
+        List<Direction> nearbyVeins = core.findNeighborVeins();
         if (nearbyVeins != null && !nearbyVeins.isEmpty()) {
             // Custom divide factor: about -1.66~ weight per nearby vein
             double nearbyAmountFactor = (double) (nearbyVeins.size() / 6) * 0.4;
