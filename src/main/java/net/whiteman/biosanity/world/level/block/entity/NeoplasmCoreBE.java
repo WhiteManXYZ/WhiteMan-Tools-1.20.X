@@ -51,6 +51,7 @@ public class NeoplasmCoreBE extends BlockEntity {
     /** Memory for scanned blocks, so we can store this data
      * and use it later (for growing and absorbing found resource eg) */
     private final Map<Direction, List<ScannedResource>> blockScanMemory = new EnumMap<>(Direction.class);
+    private final Map<Direction, Long> lastScanTime = new EnumMap<>(Direction.class);
 
     public NeoplasmCoreBE(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.NEOPLASM_CORE_BE.get(), pPos, pBlockState);
@@ -272,6 +273,10 @@ public class NeoplasmCoreBE extends BlockEntity {
         if (this.nextImpulseId < Integer.MAX_VALUE) {
             this.nextImpulseId++;
         } else this.nextImpulseId = 0;
+    }
+
+    public Map<Direction, Long> getLastScanTime() {
+        return lastScanTime;
     }
 
     @Override
