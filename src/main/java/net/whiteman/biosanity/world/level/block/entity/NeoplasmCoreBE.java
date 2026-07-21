@@ -196,7 +196,7 @@ public class NeoplasmCoreBE extends BlockEntity {
 
         switch (packet.type()) {
             case GROW -> hivemind.increaseAlertPoints(5);
-            case SCAN -> hivemind.increaseAlertPoints(15);
+            case SCAN_BLOCKS -> hivemind.increaseAlertPoints(15);
         }
     }
     //endregion

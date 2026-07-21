@@ -197,6 +197,7 @@ public class NeoplasmVeinBE extends BlockEntity {
                 }
                 case SCAN -> {
                     List<ScannedResource> blocks = veinBlock.scanNearbyBlocks(level, worldPosition, 2);
+                case SCAN_BLOCKS -> {
 
                     if (!blocks.isEmpty() && sourceCore instanceof NeoplasmCoreBE blockEntity) {
                         blockEntity.receiveScanResult(packet.sendDirection(), blocks);
