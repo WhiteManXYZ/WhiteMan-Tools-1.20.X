@@ -80,6 +80,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy(getHasName(Blocks.SAND), has(Blocks.SAND))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ModBlocks.PURIFICATION_STATION_BLOCK.get())
+                .pattern("OOO")
+                .pattern("O#O")
+                .pattern("O O")
+                .define('O', Items.IRON_INGOT)
+                .define('#', Items.IRON_BLOCK)
+                .unlockedBy(getHasName(Items.IRON_BLOCK), has(Items.IRON_BLOCK))
+                .save(pWriter);
+
         oreSmelting(pWriter, ALGANIT_SMELTABLES, RecipeCategory.MISC, ModItems.ALGANIT.get(), 0, 200, "alganit");
         oreBlasting(pWriter, ALGANIT_SMELTABLES, RecipeCategory.MISC, ModItems.ALGANIT.get(), 0, 100, "alganit");
         //endregion
