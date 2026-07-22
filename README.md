@@ -1,6 +1,4 @@
 ﻿# Biosanity-1.20.X (WIP)
-### Mod in beta. Full release will be posted later.
----
 [![Join our Discord](https://img.shields.io/discord/1391884123722748026?label=Discord&logo=discord&style=flat&labelColor=7289DA&color=2ECC71&logoColor=white)](https://discord.gg/rJEKD3CQ8a)
 
 Techno mod with bio elements for Minecraft 1.20.1 (may works on any 1.20.x, not tested yet).  
