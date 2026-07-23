@@ -2,6 +2,7 @@ package net.whiteman.biosanity.world.level.neoplasm.ai.goals;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.whiteman.biosanity.BiosanityMod;
 import net.whiteman.biosanity.world.level.block.entity.NeoplasmCoreBE;
 import net.whiteman.biosanity.world.level.neoplasm.ai.AbstractGoal;
 import net.whiteman.biosanity.world.level.neoplasm.hivemind.Hivemind;
@@ -81,7 +82,7 @@ public class ScanBlocks extends AbstractGoal {
     }
 
     @Override public void start() {
-        System.out.println(getHivemind().getId() + ": Started scan");
+        BiosanityMod.LOGGER.debug("Started scanning blocks.");
         resetTimer(goalCooldown);
     }
 
@@ -118,6 +119,6 @@ public class ScanBlocks extends AbstractGoal {
     }
 
     @Override public void stop() {
-        System.out.println(getHivemind().getId() + ": Stop scan");
+        BiosanityMod.LOGGER.debug("Stop scanning blocks.");
     }
 }

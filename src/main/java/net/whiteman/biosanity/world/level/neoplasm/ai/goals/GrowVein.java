@@ -2,6 +2,7 @@ package net.whiteman.biosanity.world.level.neoplasm.ai.goals;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.whiteman.biosanity.BiosanityMod;
 import net.whiteman.biosanity.world.level.neoplasm.ai.AbstractGoal;
 import net.whiteman.biosanity.world.level.block.entity.NeoplasmCoreBE;
 import net.whiteman.biosanity.world.level.neoplasm.hivemind.Hivemind;
@@ -56,7 +57,7 @@ public class GrowVein extends AbstractGoal {
     }
 
     @Override public void start() {
-        System.out.println(getHivemind().getId() + ": Started growing veins!");
+        BiosanityMod.LOGGER.debug("Started growing veins.");
         resetTimer(goalCooldown);
     }
 
@@ -82,6 +83,6 @@ public class GrowVein extends AbstractGoal {
     }
 
     @Override public void stop() {
-        System.out.println(getHivemind().getId() + ": Stop growing veins!");
+        BiosanityMod.LOGGER.debug("Stopped growing veins.");
     }
 }

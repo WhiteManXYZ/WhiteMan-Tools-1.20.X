@@ -1,5 +1,6 @@
 package net.whiteman.biosanity.world.level.neoplasm.ai.goals;
 
+import net.whiteman.biosanity.BiosanityMod;
 import net.whiteman.biosanity.world.level.neoplasm.ai.AbstractGoal;
 import net.whiteman.biosanity.world.level.block.entity.NeoplasmCoreBE;
 
@@ -31,7 +32,7 @@ public class Idle extends AbstractGoal {
     }
 
     @Override public void start() {
-        System.out.println("Idle start");
+        BiosanityMod.LOGGER.debug("Idle mode.");
         resetTimer(goalCooldown);
     }
 
@@ -40,12 +41,12 @@ public class Idle extends AbstractGoal {
         timer++;
 
         if (timer >= currentCooldown) {
-            getHivemind().modifyStamina(1);
+            getHivemind().modifyStamina(100);
             resetTimer(goalCooldown);
         }
     }
 
     @Override public void stop() {
-        System.out.println("Idle stop");
+        BiosanityMod.LOGGER.debug("Idle stopped.");
     }
 }
