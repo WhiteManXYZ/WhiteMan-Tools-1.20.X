@@ -41,7 +41,7 @@ public class Idle extends AbstractGoal {
         timer++;
 
         if (timer >= currentCooldown) {
-            getHivemind().modifyStamina(100);
+            getHivemind().modifyStamina(1);
             resetTimer(goalCooldown);
         }
     }

@@ -6,11 +6,14 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.whiteman.biosanity.BiosanityMod;
 import net.whiteman.biosanity.world.level.block.ModBlocks;
 import net.whiteman.biosanity.world.level.neoplasm.ai.IHivemindGoal;
 import net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig;
@@ -45,7 +48,21 @@ public class NeoplasmCoreBE extends BlockEntity {
     private int goalConditionOffset;
 
     private int nextImpulseId = 0;
-    private record PendingImpulse(ImpulsePacket packet, long sentTime) {}
+    private record PendingImpulse(ImpulsePacket packet, long sentTime) {
+        public CompoundTag toNBT() {
+            CompoundTag nbt = new CompoundTag();
+            nbt.put("packet", packet.toNBT());
+            nbt.putLong("sent_time", sentTime);
+            return nbt;
+        }
+
+        public static PendingImpulse fromNBT(CompoundTag nbt) {
+            ImpulsePacket packet = ImpulsePacket.fromNBT(nbt.getCompound("packet"));
+            long sentTime = nbt.getLong("sentTime");
+
+            return new PendingImpulse(packet, sentTime);
+        }
+    }
     private final Map<Integer, PendingImpulse> pendingImpulses = new HashMap<>();
 
     /** Memory for scanned blocks, so we can store this data
@@ -179,9 +196,8 @@ public class NeoplasmCoreBE extends BlockEntity {
 
         if (pendingImpulses.containsKey(id)) {
             pendingImpulses.remove(id);
-            System.out.printf("Packet %s successfully delivered! core pos: %s\n",packet.type(), worldPosition);
         } else {
-            System.out.println("Received an outdated or ghost packet: " + id);
+            BiosanityMod.LOGGER.warn("Received an outdated or ghost packet: " + id);
         }
     }
 
@@ -191,7 +207,7 @@ public class NeoplasmCoreBE extends BlockEntity {
     }
 
     public void receiveFailedImpulse(ImpulsePacket packet) {
-        System.out.println("Failed impulse with id: " + packet.id());
+        BiosanityMod.LOGGER.debug("Failed impulse with id: " + packet.id());
 
         Hivemind hivemind = getHivemind();
         if (hivemind == null) return;
@@ -303,6 +319,48 @@ public class NeoplasmCoreBE extends BlockEntity {
             pTag.putUUID("hivemind_id", hivemindId);
         }
         pTag.putInt("next_impulse_id", nextImpulseId);
+
+        ListTag impulsesList = new ListTag();
+        for (Map.Entry<Integer, PendingImpulse> entry : pendingImpulses.entrySet()) {
+            CompoundTag entryTag = new CompoundTag();
+
+            entryTag.putInt("key", entry.getKey());
+            entryTag.put("value", entry.getValue().toNBT());
+
+            impulsesList.add(entryTag);
+        }
+        pTag.put("pending_impulses", impulsesList);
+
+        ListTag blockMemoryList = new ListTag();
+        for (Map.Entry<Direction, List<ScannedResource>> entry : blockScanMemory.entrySet()) {
+            CompoundTag directionTag = new CompoundTag();
+            Direction direction = entry.getKey();
+            List<ScannedResource> resources = entry.getValue();
+
+            directionTag.putInt("direction", direction.get3DDataValue());
+
+            ListTag resourceList = new ListTag();
+            for (ScannedResource res : resources) {
+                resourceList.add(res.toNBT());
+            }
+
+            directionTag.put("resources", resourceList);
+
+            blockMemoryList.add(directionTag);
+        }
+        pTag.put("block_scan_memory", blockMemoryList);
+
+        ListTag lastScansTimeList = new ListTag();
+        for (Map.Entry<Direction, Long> entry : lastScanTime.entrySet()) {
+            CompoundTag entryTag = new CompoundTag();
+
+            entryTag.putInt("direction", entry.getKey().get3DDataValue());
+            entryTag.putLong("scan_time", entry.getValue());
+
+            lastScansTimeList.add(entryTag);
+        }
+        pTag.put("last_scans_time", lastScansTimeList);
+
         super.saveAdditional(pTag);
     }
 
@@ -313,5 +371,46 @@ public class NeoplasmCoreBE extends BlockEntity {
             this.hivemindId = pTag.getUUID("hivemind_id");
         }
         this.nextImpulseId = pTag.getInt("next_impulse_id");
+
+        this.pendingImpulses.clear();
+        ListTag pendingImpulsesList = pTag.getList("pending_impulses", Tag.TAG_COMPOUND);
+        for (Tag tag : pendingImpulsesList) {
+            if (tag instanceof CompoundTag entryTag) {
+                int key = entryTag.getInt("key");
+                PendingImpulse value = PendingImpulse.fromNBT(entryTag.getCompound("value"));
+
+                this.pendingImpulses.put(key, value);
+            }
+        }
+
+        this.blockScanMemory.clear();
+        ListTag blockScanMemoryList = pTag.getList("block_scan_memory", Tag.TAG_COMPOUND);
+        for (Tag tag : blockScanMemoryList) {
+            if (tag instanceof CompoundTag entryTag) {
+                Direction key = Direction.from3DDataValue(entryTag.getInt("direction"));
+                List<ScannedResource> values = new ArrayList<>();
+                ListTag resourcesList = entryTag.getList("resources", Tag.TAG_COMPOUND);
+
+                for (Tag resTag : resourcesList) {
+                    if (resTag instanceof CompoundTag resourceCompoundTag) {
+                        ScannedResource resource = ScannedResource.fromNBT(resourceCompoundTag);
+                        values.add(resource);
+                    }
+                }
+
+                this.blockScanMemory.put(key, values);
+            }
+        }
+
+        this.lastScanTime.clear();
+        ListTag lastScansList = pTag.getList("last_scans_time", Tag.TAG_COMPOUND);
+        for (Tag tag : lastScansList) {
+            if (tag instanceof CompoundTag compoundTag) {
+                Direction key = Direction.from3DDataValue(compoundTag.getInt("direction"));
+                Long value = compoundTag.getLong("scan_time");
+
+                lastScanTime.put(key, value);
+            }
+        }
     }
 }
