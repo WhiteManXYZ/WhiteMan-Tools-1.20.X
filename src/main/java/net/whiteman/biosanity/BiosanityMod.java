@@ -1,5 +1,6 @@
 package net.whiteman.biosanity;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -26,6 +27,7 @@ import net.whiteman.biosanity.world.item.crafting.ModRecipes;
 import net.whiteman.biosanity.world.level.block.ModBlocks;
 import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
 import net.whiteman.biosanity.world.level.neoplasm.resource.ResourceRegistry;
+import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(BiosanityMod.MOD_ID)
@@ -33,7 +35,7 @@ public class BiosanityMod {
     // Define mod id in a common place for everything to reference
     public static final String MOD_ID = "biosanity";
     // Directly reference a slf4j logger
-    //private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public BiosanityMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
