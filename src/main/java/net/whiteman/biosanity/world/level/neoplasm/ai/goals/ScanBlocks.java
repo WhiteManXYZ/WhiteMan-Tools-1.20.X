@@ -53,10 +53,6 @@ public class ScanBlocks extends AbstractGoal {
 
         if (utility <= 0) return 0.0;
 
-        // Stamina factor
-        double staminaFactor = (double) hivemind.getStamina() / hivemind.getMaxStamina();
-        utility *= staminaFactor;
-
         coreLastScans = coreBE.getLastScanTime();
 
         // If we don't have scans yet, increase utility

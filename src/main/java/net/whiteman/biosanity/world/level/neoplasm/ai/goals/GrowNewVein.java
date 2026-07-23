@@ -42,10 +42,6 @@ public class GrowNewVein extends AbstractGoal {
         double utility = super.evaluateUtility();
         if (utility <= 0) return 0;
 
-        // Stamina factor (100% -> full base weight, 50% -> half etc.)
-        double staminaFactor = (double) hivemind.getStamina() / hivemind.getMaxStamina();
-        utility *= staminaFactor;
-
         // If there are enough resources, we increase a little growth weight
         double biomassFactor = (double) hivemind.getBiomass() / hivemind.getStorage();
         if (biomassFactor > 0.75d) {

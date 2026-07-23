@@ -44,10 +44,6 @@ public class GrowVein extends AbstractGoal {
         double utility = super.evaluateUtility();
         if (utility <= 0) return 0;
 
-        // Stamina factor (100% -> full base weight, 50% -> half etc.)
-        double staminaFactor = (double) hivemind.getStamina() / hivemind.getMaxStamina();
-        utility *= staminaFactor;
-
         // TEST
         // "Adrenaline"
         // If resources is close to be insufficient, increase "looking for resources"
