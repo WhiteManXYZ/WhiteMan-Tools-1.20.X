@@ -30,6 +30,7 @@ public class Hivemind {
     private int biomass = STARTING_BIOMASS_VALUE;
     private int minerals = STARTING_MINERALS_VALUE;
     private int energy = STARTING_ENERGY_VALUE;
+    public record HivemindResources(int biomass, int minerals, int energy) {}
 
     // AI section (wip)
     private final Map<BlockPos, IHivemindGoal> assignments = new HashMap<>();
@@ -180,7 +181,7 @@ public class Hivemind {
     //endregion
 
     //region Hivemind resources getters/setters
-    public int getBiomass() { return this.biomass; }
+    public HivemindResources getResources() { return new HivemindResources(biomass, minerals, energy); }
 
     public void modifyBiomass(int amount) {
         int oldVal = this.biomass;
@@ -192,8 +193,6 @@ public class Hivemind {
         }
     }
 
-    public int getMinerals() { return this.minerals; }
-
     public void modifyMinerals(int amount) {
         int oldVal = this.minerals;
 
@@ -203,8 +202,6 @@ public class Hivemind {
             this.onResourceChanged();
         }
     }
-
-    public int getEnergy() { return this.energy; }
 
     public void modifyEnergy(int amount) {
         int oldVal = this.energy;

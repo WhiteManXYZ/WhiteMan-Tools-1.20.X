@@ -41,7 +41,7 @@ public class ExpandHivemind extends AbstractGoal {
         if (!hasAnySpaceToGrow(level)) return false;
 
         // If we don't have enough resources, return false
-        return (hivemind.getBiomass() >= biomassCost && hivemind.getStamina() >= staminaCost);
+        return (hivemind.getResources().biomass() >= biomassCost && hivemind.getStamina() >= staminaCost);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ExpandHivemind extends AbstractGoal {
         if (utility <= 0) return 0;
 
         // If there are enough resources, we increase expanding weight
-        double biomassFactor = (double) hivemind.getBiomass() / hivemind.getStorage();
+        double biomassFactor = (double) hivemind.getResources().biomass() / hivemind.getStorage();
         if (biomassFactor > 0.85d) {
             utility += 0.7 * baseWeight;
         }

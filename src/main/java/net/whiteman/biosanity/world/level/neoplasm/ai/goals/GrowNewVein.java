@@ -33,7 +33,7 @@ public class GrowNewVein extends AbstractGoal {
         if (!hasAnySpaceToGrow(level)) return false;
 
         // If we don't have enough resources, return false
-        return (hivemind.getBiomass() >= biomassCost && hivemind.getStamina() >= staminaCost);
+        return (hivemind.getResources().biomass() >= biomassCost && hivemind.getStamina() >= staminaCost);
     }
 
     public double evaluateUtility() {
@@ -44,7 +44,7 @@ public class GrowNewVein extends AbstractGoal {
         if (utility <= 0) return 0;
 
         // If there are enough resources, we increase a little growth weight
-        double biomassFactor = (double) hivemind.getBiomass() / hivemind.getStorage();
+        double biomassFactor = (double) hivemind.getResources().biomass() / hivemind.getStorage();
         if (biomassFactor > 0.75d) {
             utility += 0.3 * baseWeight;
         }

@@ -34,7 +34,7 @@ public class GrowVein extends AbstractGoal {
         if (connectedVeins.isEmpty()) return false;
 
         // If we don't have enough resources, return false
-        return (hivemind.getBiomass() >= biomassCost && hivemind.getStamina() >= staminaCost);
+        return (hivemind.getResources() .biomass()>= biomassCost && hivemind.getStamina() >= staminaCost);
     }
 
     public double evaluateUtility() {
@@ -48,7 +48,7 @@ public class GrowVein extends AbstractGoal {
         // TEST
         // "Adrenaline"
         // If resources is close to be insufficient, increase "looking for resources"
-        double biomassFactor = (double) hivemind.getBiomass() / hivemind.getStorage();
+        double biomassFactor = (double) hivemind.getResources().biomass() / hivemind.getStorage();
         if (biomassFactor < 0.15d) {
             utility += 0.3 * baseWeight;
         }
