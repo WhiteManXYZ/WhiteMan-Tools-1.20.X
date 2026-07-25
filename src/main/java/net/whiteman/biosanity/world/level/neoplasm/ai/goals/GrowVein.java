@@ -74,7 +74,7 @@ public class GrowVein extends AbstractGoal {
 
             if (direction == null) return;
 
-            if (core.sendImpulse(ImpulseType.GROW, hivemind.getLevel(), direction)) {
+            if (core.sendImpulse(ImpulseType.ARBITRARY_GROW, hivemind.getLevel(), direction)) {
                 hivemind.modifyBiomass(-biomassCost);
                 hivemind.modifyStamina(-staminaCost);
                 resetTimer(goalCooldown);

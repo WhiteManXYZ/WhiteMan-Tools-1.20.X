@@ -187,13 +187,13 @@ public class NeoplasmVeinBE extends BlockEntity {
 
         if (state.getBlock() instanceof NeoplasmVeinBlock veinBlock) {
             switch (packet.type()) {
-                case GROW -> {
+                case ARBITRARY_GROW -> {
                     if (veinBlock.canSpread(level, worldPosition, packet.hiveLevel())) {
                         veinBlock.performGrowth(level, worldPosition, state, packet);
                     }
                 }
                 case SCAN_BLOCKS -> {
-                    Scan scan = veinBlock.scanNearbyBlocks(level, worldPosition, 2);
+                    Scan scan = veinBlock.scanNearbyBlocks(level, worldPosition, 3);
 
                     if (sourceCore instanceof NeoplasmCoreBE blockEntity) {
                         blockEntity.receiveScanResult(packet.sendDirection(), scan);

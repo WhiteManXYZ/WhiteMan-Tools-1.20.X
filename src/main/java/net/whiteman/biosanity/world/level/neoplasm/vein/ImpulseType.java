@@ -2,6 +2,7 @@ package net.whiteman.biosanity.world.level.neoplasm.vein;
 
 public enum ImpulseType {
     NONE,
-    GROW,
+    DIRECTIONAL_GROW,
+    ARBITRARY_GROW,
     SCAN_BLOCKS
 }
