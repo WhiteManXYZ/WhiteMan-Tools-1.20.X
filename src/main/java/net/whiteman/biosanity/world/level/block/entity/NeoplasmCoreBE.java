@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.whiteman.biosanity.BiosanityMod;
 import net.whiteman.biosanity.world.level.block.ModBlocks;
 import net.whiteman.biosanity.world.level.neoplasm.ai.IHivemindGoal;
+import net.whiteman.biosanity.world.level.neoplasm.ai.block.NeoplasmCoreAI;
 import net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig;
 import net.whiteman.biosanity.world.level.neoplasm.common.INeoplasmNode;
 import net.whiteman.biosanity.world.level.neoplasm.hivemind.Hivemind;
@@ -39,6 +40,7 @@ import static net.whiteman.biosanity.world.level.neoplasm.resource.ResourceRegis
 public class NeoplasmCoreBE extends BlockEntity {
     private UUID hivemindId;
     private IHivemindGoal currentGoal;
+    private final NeoplasmCoreAI neoplasmCoreAI;
 
     /** Seeded parameter that offsets a little goal cooldown,
      * to prevent actions in same tick */
@@ -48,30 +50,20 @@ public class NeoplasmCoreBE extends BlockEntity {
     private int goalConditionOffset;
 
     private int nextImpulseId = 0;
-    private record PendingImpulse(ImpulsePacket packet, long sentTime) {
-        public CompoundTag toNBT() {
-            CompoundTag nbt = new CompoundTag();
-            nbt.put("packet", packet.toNBT());
-            nbt.putLong("sent_time", sentTime);
-            return nbt;
-        }
-
-        public static PendingImpulse fromNBT(CompoundTag nbt) {
-            ImpulsePacket packet = ImpulsePacket.fromNBT(nbt.getCompound("packet"));
-            long sentTime = nbt.getLong("sentTime");
-
-            return new PendingImpulse(packet, sentTime);
-        }
-    }
     private final Map<Integer, PendingImpulse> pendingImpulses = new HashMap<>();
 
     /** Memory for scanned blocks, so we can store this data
      * and use it later (for growing and absorbing found resource eg) */
-    private final Map<Direction, List<ScannedResource>> blockScanMemory = new EnumMap<>(Direction.class);
+    public final Map<Direction, List<ScannedResource>> blockScanMemory = new EnumMap<>(Direction.class);
     private final Map<Direction, Long> lastScanTime = new EnumMap<>(Direction.class);
+
+
+    //DEBUG
+    private ArrayList<NeoplasmCoreAI.PosInDirection> targetsList = new ArrayList<>();
 
     public NeoplasmCoreBE(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.NEOPLASM_CORE_BE.get(), pPos, pBlockState);
+        neoplasmCoreAI = new NeoplasmCoreAI(this);
     }
 
     public void tick(Level level, BlockPos pos, BlockState state, NeoplasmCoreBE blockEntity) {
@@ -81,6 +73,8 @@ public class NeoplasmCoreBE extends BlockEntity {
         if (hive == null) {
             return;
         }
+
+        neoplasmCoreAI.hivemind = hive;
 
         if (this.currentGoal != null) {
             if (this.currentGoal.canContinueToUse()) {
@@ -100,6 +94,13 @@ public class NeoplasmCoreBE extends BlockEntity {
                 }
                 return false;
             });
+        }
+
+        // updates every 1.5 sec
+        if (level.getGameTime() % 30 == 0) {
+            neoplasmCoreAI.tick(level);
+            for (NeoplasmCoreAI.PosInDirection packet : targetsList)
+                BiosanityMod.LOGGER.debug(packet.direction() + ": " + packet.pos());
         }
     }
 
@@ -202,6 +203,7 @@ public class NeoplasmCoreBE extends BlockEntity {
     }
 
     public void receiveScanResult(Direction sendDirection, NeoplasmVeinBlock.Scan scan) {
+        blockScanMemory.clear();
         blockScanMemory.put(sendDirection, scan.scannedResources());
         lastScanTime.put(sendDirection, scan.scanTime());
     }
@@ -213,9 +215,13 @@ public class NeoplasmCoreBE extends BlockEntity {
         if (hivemind == null) return;
 
         switch (packet.type()) {
-            case GROW -> hivemind.increaseAlertPoints(5);
+            case ARBITRARY_GROW -> hivemind.increaseAlertPoints(5);
             case SCAN_BLOCKS -> hivemind.increaseAlertPoints(15);
         }
+    }
+
+    public void setResourcePosForDirection(ArrayList<NeoplasmCoreAI.PosInDirection> packet) {
+        targetsList = packet;
     }
     //endregion
 
@@ -411,6 +417,22 @@ public class NeoplasmCoreBE extends BlockEntity {
 
                 lastScanTime.put(key, value);
             }
+        }
+    }
+
+    private record PendingImpulse(ImpulsePacket packet, long sentTime) {
+        public CompoundTag toNBT() {
+            CompoundTag nbt = new CompoundTag();
+            nbt.put("packet", packet.toNBT());
+            nbt.putLong("sent_time", sentTime);
+            return nbt;
+        }
+
+        public static PendingImpulse fromNBT(CompoundTag nbt) {
+            ImpulsePacket packet = ImpulsePacket.fromNBT(nbt.getCompound("packet"));
+            long sentTime = nbt.getLong("sentTime");
+
+            return new PendingImpulse(packet, sentTime);
         }
     }
 }
