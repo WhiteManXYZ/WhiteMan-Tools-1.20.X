@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum HivemindLevel implements StringRepresentable {
     /// WIP
-    // First stage, can only absorb resources first level
+    // First stage, can only absorb resources first amount
     // and dig through basic blocks (dirt, sand etc.)
     T1("tier_1", 0, 100),
     T2("tier_2", 120, 200),

@@ -32,8 +32,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static net.whiteman.biosanity.world.level.block.NeoplasmRotBlock.RESOURCE_LEVEL;
-import static net.whiteman.biosanity.world.level.block.NeoplasmRotBlock.RESOURCE_TYPE;
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig.*;
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConstants.*;
 import static net.whiteman.biosanity.world.level.neoplasm.resource.ResourceRegistry.*;
@@ -151,13 +149,12 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
      * and transfers absorbed resources to vein */
     private void absorbWithRotBlock(Level level, BlockPos targetPos, ResourceTypeEntry info, BlockState targetState, BlockPos currentPos, BlockState currentState) {
         // Absorb target
-        level.setBlock(targetPos, ModBlocks.NEOPLASM_ROT_BLOCK.get().defaultBlockState()
-                .setValue(RESOURCE_TYPE, info.resourceType())
-                .setValue(RESOURCE_LEVEL, info.level()), Block.UPDATE_CLIENTS);
+        level.setBlock(targetPos, ModBlocks.NEOPLASM_ROT_BLOCK.get().defaultBlockState(), Block.UPDATE_CLIENTS);
 
-        if (level.getBlockEntity(targetPos) instanceof NeoplasmRotBE blockEntity) {
-            blockEntity.setOriginalState(targetState);
-            blockEntity.setChanged();
+        if (level.getBlockEntity(targetPos) instanceof NeoplasmRotBE be) {
+            be.setOriginalState(targetState);
+            be.setResourceData(info.resource());
+            be.setChanged();
 
             // Sync a little later for prevent desynchronization
             var server = level.getServer();
@@ -189,10 +186,13 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
             BlockState state = level.getBlockState(pos);
 
             if (ResourceRegistry.isResource(state.getBlock())) {
+                ResourceTypeEntry resourceTypeEntry = ResourceRegistry.getResourceInfo(state.getBlock());
+                if (resourceTypeEntry == null) continue;
+
                 found.add(new ScannedResource(pos, state.getBlock(),
                         (int) Math.sqrt(center.distSqr(pos)),
                         time,
-                        ResourceRegistry.getResourceInfo(state.getBlock()).resourceType()));
+                        resourceTypeEntry.resource().keySet()));
             }
         }
 
@@ -266,7 +266,7 @@ public class NeoplasmVeinBlock extends BaseEntityBlock implements INeoplasmNode 
             BlockState state = level.getBlockState(checkPos);
             ResourceTypeEntry info = getResourceInfo(state.getBlock());
 
-            if (info.resourceType().isResource()) {
+            if (info != null && !info.resource().isEmpty()) {
                 return new ResourceResult(dir, info, state);
             }
         }

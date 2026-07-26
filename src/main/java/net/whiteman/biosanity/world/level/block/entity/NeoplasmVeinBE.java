@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -15,6 +17,9 @@ import net.whiteman.biosanity.world.level.neoplasm.vein.ImpulseType;
 import net.whiteman.biosanity.world.level.block.NeoplasmVeinBlock;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig.TICKS_TO_SEND_IMPULSE;
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig.TICKS_TO_TRANSFER_NUTRIENT;
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConstants.DIRECTIONS;
@@ -25,8 +30,7 @@ public class NeoplasmVeinBE extends BlockEntity {
     public Direction parentDirection = Direction.DOWN;
     public Direction childDirection = Direction.DOWN;
 
-    private ResourceType heldResourceType = ResourceType.NONE;
-    private int heldResourceLevel = 0;
+    private final Map<ResourceType, Integer> heldResources = new HashMap<>(2);
     private int transferCooldown = 0;
 
     private ImpulsePacket activeImpulse = null;
@@ -37,7 +41,7 @@ public class NeoplasmVeinBE extends BlockEntity {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state, NeoplasmVeinBE be) {
-        if (state.getValue(HAS_NUTRIENT) || be.heldResourceType != ResourceType.NONE) {
+        if (state.getValue(HAS_NUTRIENT) || !be.heldResources.isEmpty()) {
             // Transfer countdown
             if (be.transferCooldown > 0) {
                 be.transferCooldown--;
@@ -82,11 +86,11 @@ public class NeoplasmVeinBE extends BlockEntity {
 
             if (targetEntity instanceof NeoplasmVeinBE blockEntity) {
                 // Target vein
-                blockEntity.setData(this.heldResourceType, this.heldResourceLevel);
+                blockEntity.setHeldData(heldResources);
                 blockEntity.transferCooldown = TICKS_TO_TRANSFER_NUTRIENT;
                 // Current vein
                 level.setBlock(pos, state.setValue(HAS_NUTRIENT, false), Block.UPDATE_ALL);
-                this.clearResource();
+                this.clearHeld();
             }
 
             // TEST PARTICLE
@@ -108,12 +112,12 @@ public class NeoplasmVeinBE extends BlockEntity {
 
             if (targetCoreEntity instanceof NeoplasmCoreBE core) {
                 // Target core
-                boolean isDecomposed = core.decomposeResource(this.heldResourceType, this.heldResourceLevel);
+                boolean isDecomposed = core.decomposeResource(this.heldResources);
                 // Current vein
                 if (!isDecomposed) return;
 
                 level.setBlock(pos, state.setValue(HAS_NUTRIENT, false), Block.UPDATE_ALL);
-                this.clearResource();
+                this.clearHeld();
 
 
                 // TEST PARTICLE
@@ -209,15 +213,14 @@ public class NeoplasmVeinBE extends BlockEntity {
         clearImpulse();
     }
 
-    public void setData(ResourceType type, int level) {
-        this.heldResourceType = type;
-        this.heldResourceLevel = level;
+    public void setHeldData(Map<ResourceType, Integer> heldResource) {
+        this.heldResources.clear();
+        this.heldResources.putAll(heldResource);
         this.setChanged();
     }
 
-    private void clearResource() {
-        this.heldResourceType = ResourceType.NONE;
-        this.heldResourceLevel = 0;
+    private void clearHeld() {
+        this.heldResources.clear();
         this.setChanged();
     }
 
@@ -240,9 +243,17 @@ public class NeoplasmVeinBE extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        tag.putString("held_resource_type", heldResourceType.name());
-        tag.putInt("held_resourceLevel", heldResourceLevel);
+    protected void saveAdditional(@NotNull CompoundTag tag) {
+        ListTag heldResourceList = new ListTag();
+        for (Map.Entry<ResourceType, Integer> entry : heldResources.entrySet()) {
+            CompoundTag entryTag = new CompoundTag();
+
+            entryTag.putString("key", entry.getKey().name());
+            entryTag.putInt("value", entry.getValue());
+
+            heldResourceList.add(entryTag);
+        }
+        tag.put("held_resource", heldResourceList);
 
         if (activeImpulse != null) {
             tag.put("active_impulse", activeImpulse.toNBT());
@@ -258,8 +269,17 @@ public class NeoplasmVeinBE extends BlockEntity {
     @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
-        this.heldResourceType = ResourceType.valueOf(tag.getString("held_resource_type"));
-        this.heldResourceLevel = tag.getInt("held_resourceLevel");
+
+        this.heldResources.clear();
+        ListTag heldResourceList = tag.getList("held_resource", Tag.TAG_COMPOUND);
+        for (Tag pTag : heldResourceList) {
+            if (pTag instanceof CompoundTag entryTag) {
+                ResourceType key = ResourceType.valueOf(entryTag.getString("key"));
+                int value = entryTag.getInt("value");
+
+                this.heldResources.put(key, value);
+            }
+        }
 
         if (tag.contains("active_impulse")) {
             this.activeImpulse = ImpulsePacket.fromNBT(tag.getCompound("active_impulse"));

@@ -2,8 +2,6 @@ package net.whiteman.biosanity.world.level.neoplasm.common;
 
 import net.whiteman.biosanity.world.level.neoplasm.hivemind.HivemindLevel;
 
-import static net.whiteman.biosanity.world.level.neoplasm.resource.ResourceRegistry.MAX_RESOURCE_LEVEL;
-
 public class NeoplasmConfig {
     /// WIP
     /// Maybe make external .json config?
@@ -78,18 +76,5 @@ public class NeoplasmConfig {
     //endregion
 
     // Resources params
-    /** Determines how much experience points gain Hivemind from level (type doesn't matter) */
-    public static final int[] XP_VALUES = new int[]{0, 10, 30, 90, 270, 810, 2430, 7290};
-    /** Determines how much resources gain Hivemind from level (type doesn't matter) */
-    public static final int[] NUTRIENTS_VALUES = new int[]{0, 10, 20, 40, 80, 160, 320, 640};
-
-    public static int getXPFromLevel(int level) {
-        int clampedLevel = Math.max(0, Math.min(level, MAX_RESOURCE_LEVEL));
-        return XP_VALUES[clampedLevel];
-    }
-
-    public static int getNutrientsFromLevel(int level) {
-        int clampedLevel = Math.max(0, Math.min(level, MAX_RESOURCE_LEVEL));
-        return NUTRIENTS_VALUES[clampedLevel];
-    }
+    public static final int MAX_RESOURCE_VALUE = 9999;
 }

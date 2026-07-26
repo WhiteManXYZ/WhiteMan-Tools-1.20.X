@@ -154,9 +154,9 @@ public class HivemindManager extends SavedData {
     }
 
     /**
-     * Ticks all existing Hiveminds in the level.
+     * Ticks all existing Hiveminds in the amount.
      * Performs a garbage collection of empty hiveminds every N minutes ({@value CLEANUP_INTERVAL} ticks)
-     * @param event The level tick event
+     * @param event The amount tick event
      */
     @SubscribeEvent
     public static void onWorldTick(TickEvent.LevelTickEvent event) {

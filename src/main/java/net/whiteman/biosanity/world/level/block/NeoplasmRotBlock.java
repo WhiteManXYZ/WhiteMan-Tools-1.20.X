@@ -20,13 +20,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.whiteman.biosanity.world.level.neoplasm.resource.ResourceRegistry;
-import net.whiteman.biosanity.world.level.neoplasm.resource.ResourceType;
 import net.whiteman.biosanity.world.level.block.entity.NeoplasmRotBE;
 import net.whiteman.biosanity.world.level.block.entity.ModBlockEntities;
 import net.whiteman.biosanity.world.item.ModItems;
@@ -38,14 +36,11 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConstants.DIRECTIONS;
-import static net.whiteman.biosanity.world.level.neoplasm.resource.ResourceRegistry.MAX_RESOURCE_LEVEL;
 import static net.whiteman.biosanity.world.level.neoplasm.resource.ResourceRegistry.ResourceTypeEntry;
 
 public class NeoplasmRotBlock extends BaseEntityBlock {
     public static final int MAX_ROT_CLUSTER_SIZE = 10;
 
-    public static final EnumProperty<ResourceType> RESOURCE_TYPE = EnumProperty.create("type", ResourceType.class);
-    public static final IntegerProperty RESOURCE_LEVEL = IntegerProperty.create("level", 0, MAX_RESOURCE_LEVEL);
     public static final IntegerProperty DISTANCE = IntegerProperty.create("distance", 0, MAX_ROT_CLUSTER_SIZE);
     public static final BooleanProperty IS_SOURCE = BooleanProperty.create("is_source");
     public static final BooleanProperty HAS_NUTRIENT = BooleanProperty.create("has_nutrient");
@@ -65,8 +60,6 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
     public NeoplasmRotBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
-                .setValue(RESOURCE_TYPE, ResourceType.NONE)
-                .setValue(RESOURCE_LEVEL, 0)
                 .setValue(DISTANCE, MAX_ROT_CLUSTER_SIZE)
                 .setValue(IS_SOURCE, false)
                 .setValue(HAS_NUTRIENT, false)
@@ -145,20 +138,20 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
         BlockState targetState = level.getBlockState(targetPos);
 
         ResourceTypeEntry info = ResourceRegistry.getResourceInfo(targetState.getBlock());
+        if (info == null) return;
 
-        if (info.resourceType().isResource()) {
+        if (!info.resource().isEmpty()) {
             // Calculating which distance will be in new block
             // and infect only if distance in our limit
             int targetDist = getBestNeighborDistance(level, targetPos, state);
 
             if (targetDist < MAX_ROT_CLUSTER_SIZE) {
                 level.setBlock(targetPos, ModBlocks.NEOPLASM_ROT_BLOCK.get().defaultBlockState()
-                        .setValue(RESOURCE_TYPE, info.resourceType())
-                        .setValue(RESOURCE_LEVEL, info.level())
                         .setValue(DISTANCE, targetDist), Block.UPDATE_CLIENTS);
 
                 if (level.getBlockEntity(targetPos) instanceof NeoplasmRotBE be) {
                     be.setOriginalState(targetState);
+                    be.setResourceData(info.resource());
                     be.setChanged();
                     // Sync a little later for prevent desynchronization
                     var server = level.getServer();
@@ -183,29 +176,34 @@ public class NeoplasmRotBlock extends BaseEntityBlock {
 
     @Override
     public void randomTick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
-        // Rotting over time by suck resources from block itself
-        // and sending to veins
-        if (!state.getValue(HAS_NUTRIENT)) {
+        // Rotting over time
+        if (state.getValue(HAS_NUTRIENT)) {
+            // Rot over without getting resources
+            if (random.nextFloat() < 0.3)
+                if (level.getBlockEntity(pos) instanceof NeoplasmRotBE be) {
+                    int currentStage = be.getInfectionStage();
+                    if (currentStage < MAX_STAGES - 1) {
+                        be.setInfectionStage(currentStage + 1);
+                    }
+                }
+        } else {
             if (level.getBlockEntity(pos) instanceof NeoplasmRotBE be) {
                 int currentStage = be.getInfectionStage();
                 if (currentStage < MAX_STAGES - 1) {
                     be.setInfectionStage(currentStage + 1);
-                    /// Maybe make rework this feature?
-                    // Sets self containers to self resource types/levels
-                    // to send it in the closest way to vein
                     level.setBlock(pos, state.setValue(HAS_NUTRIENT, true), Block.UPDATE_ALL);
-                    be.setData(state.getValue(RESOURCE_TYPE), state.getValue(RESOURCE_LEVEL));
+                    be.setHeldData();
                 }
             }
         }
-        // Random tick for faster infect and
-        // if block schedule chain is broken, trying to launch it again
+
+        // Call for faster infect
         tick(state, level, pos, random);
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(RESOURCE_TYPE, RESOURCE_LEVEL, DISTANCE, IS_SOURCE, HAS_NUTRIENT);
+        builder.add(DISTANCE, IS_SOURCE, HAS_NUTRIENT);
     }
 
     @Override

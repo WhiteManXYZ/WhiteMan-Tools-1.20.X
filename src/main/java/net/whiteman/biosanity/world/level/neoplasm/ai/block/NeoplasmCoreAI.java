@@ -47,9 +47,10 @@ public class NeoplasmCoreAI {
         ArrayList<PosInDirection> resources = new ArrayList<>();
 
         // TODO fix: dont returns really closest resource
+        // TODO check work
         for (Map.Entry<Direction, List<ScannedResource>> entry : blockScanData.entrySet()) {
             for (ScannedResource resource : entry.getValue()) {
-                if (resource.type().equals(requiredResource)) {
+                if (resource.types().contains(requiredResource)) {
                     resources.add(new PosInDirection(entry.getKey(), resource.pos()));
                 }
             }

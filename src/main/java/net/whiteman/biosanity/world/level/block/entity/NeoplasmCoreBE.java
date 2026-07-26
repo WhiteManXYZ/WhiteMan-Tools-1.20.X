@@ -17,7 +17,6 @@ import net.whiteman.biosanity.BiosanityMod;
 import net.whiteman.biosanity.world.level.block.ModBlocks;
 import net.whiteman.biosanity.world.level.neoplasm.ai.IHivemindGoal;
 import net.whiteman.biosanity.world.level.neoplasm.ai.block.NeoplasmCoreAI;
-import net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig;
 import net.whiteman.biosanity.world.level.neoplasm.common.INeoplasmNode;
 import net.whiteman.biosanity.world.level.neoplasm.hivemind.Hivemind;
 import net.whiteman.biosanity.world.level.neoplasm.hivemind.HivemindLevel;
@@ -35,7 +34,6 @@ import java.util.*;
 
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConfig.*;
 import static net.whiteman.biosanity.world.level.neoplasm.common.NeoplasmConstants.DIRECTIONS;
-import static net.whiteman.biosanity.world.level.neoplasm.resource.ResourceRegistry.MAX_RESOURCE_LEVEL;
 
 public class NeoplasmCoreBE extends BlockEntity {
     private UUID hivemindId;
@@ -106,22 +104,21 @@ public class NeoplasmCoreBE extends BlockEntity {
 
     //region Core actions
 
-    /** Decomposes resource for his {@link Hivemind}
-     * @param type {@link ResourceType}
-     * @param level The base nutrient value of the decomposed material (e.g. oak log has level 1)
-     * @return Result of decomposing, was it successful or not
+    /** TODO rewrite docs
      */
-    public boolean decomposeResource(ResourceType type, int level) {
+    public boolean decomposeResource(Map<ResourceType, Integer> resource) {
         Hivemind hive = getHivemind();
-        if (hive == null || level <= 0 || level > MAX_RESOURCE_LEVEL) return false;
+        if (hive == null || resource == null) return false;
 
-        hive.modifyExperiencePoints(NeoplasmConfig.getXPFromLevel(level));
+        for (Map.Entry<ResourceType, Integer> entry : resource.entrySet()) {
+            hive.modifyExperiencePoints(entry.getValue() * 2);
 
-        switch (type) {
-            case BIOMASS -> hive.modifyBiomass(NeoplasmConfig.getNutrientsFromLevel(level));
-            case MINERAL -> hive.modifyMinerals(NeoplasmConfig.getNutrientsFromLevel(level));
-            case ENERGY -> hive.modifyEnergy(NeoplasmConfig.getNutrientsFromLevel(level));
-            default -> throw new IllegalArgumentException("Unknown resource type: " + type);
+            switch (entry.getKey()) {
+                case BIOMASS -> hive.modifyBiomass(entry.getValue());
+                case MINERAL -> hive.modifyMinerals(entry.getValue());
+                case ENERGY -> hive.modifyEnergy(entry.getValue());
+                default -> throw new IllegalArgumentException("[CoreBE]: Unknown resource type caught on decompose: " + entry.getKey());
+            }
         }
 
         return true;
